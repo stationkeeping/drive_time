@@ -1,4 +1,7 @@
 require "drive_time/version"
+require "log4r"
+require "google_drive"
+require "deep_end"
 
 module DriveTime
   
@@ -53,7 +56,7 @@ module DriveTime
     # Store the model by class to avoid key collisions
     def self.add_model(instance, key)
       # Sanitise key
-      key = GoogleSpreadsheetConversion.underscore_from_text(key)
+      key = DriveTime.underscore_from_text(key)
       clazz = instance.class.to_s
       ModelStoreLogger.info "Adding model with key #{key} of class #{instance.class.to_s}"
       @@store[clazz] = {} if @@store[clazz].blank?
@@ -124,7 +127,7 @@ module DriveTime
     def initialize()
       Logger.info 'Beginning Spreadsheet Conversion'
       @manifest = Manifest.new
-      @loader = GoogleSpreadsheetConversion::Loader.new
+      @loader = DriveTime::Loader.new
     end
 
     def load(mappings_path)
@@ -193,7 +196,7 @@ module DriveTime
           worksheet.mapping['associations'].each do |value|
             # And find the worksheet that satisfies it
             worksheets.each do |worksheet|
-              if GoogleSpreadsheetConversion.underscore_from_text(worksheet.title) == value['name']
+              if DriveTime.underscore_from_text(worksheet.title) == value['name']
                 associations << worksheet
               end
             end
@@ -214,7 +217,7 @@ module DriveTime
 
     def convert_worksheet(worksheet)
       # Use the spreadsheet name unless 'map_to_class' is set
-      class_name = worksheet.mapping['map_to_class'] || GoogleSpreadsheetConversion.classify_from_title(worksheet.title)
+      class_name = worksheet.mapping['map_to_class'] || DriveTime.classify_from_title(worksheet.title)
       Logger.info "Converting Worksheet #{worksheet.title} to class #{class_name}"
       # Check class exists - better we know immediately
       begin
@@ -245,7 +248,7 @@ module DriveTime
       Logger.info "Mapping fields to cells"
       row.dup.each_with_index do |cell, index|
         # Sanitise v
-        field_name = GoogleSpreadsheetConversion.underscore_from_text fields[index]
+        field_name = DriveTime.underscore_from_text fields[index]
         row_map[field_name] = row[index]
         Logger.info "- #{field_name} -> #{row[index]}"
       end
@@ -310,13 +313,13 @@ module DriveTime
               raise "No field #{class_name} to satisfy association" if cell_value.blank? && value['optional'] != true;
               components = cell_value.split ','
               components.each do |component|
-                models << get_model_for_id(GoogleSpreadsheetConversion.underscore_from_text(component), class_name)
+                models << get_model_for_id(DriveTime.underscore_from_text(component), class_name)
               end
             elsif value['converter'] == 'use_fields' # Use column names as values if cell contains 'yes' or 'y'
               value['field_names'].each do |field_name|
                 field_value = row_map[field_name]
 
-                if GoogleSpreadsheetConversion.is_affirmative? field_value
+                if DriveTime.is_affirmative? field_value
                   models << get_model_for_id(field_name, class_name)
                 end
               end
@@ -365,7 +368,7 @@ module DriveTime
     end
 
     def get_model_for_id(title, clazz)
-      model_key = GoogleSpreadsheetConversion.underscore_from_text title
+      model_key = DriveTime.underscore_from_text title
       return ModelStore.get_model clazz, model_key
     end
 
@@ -399,7 +402,7 @@ module DriveTime
       names = []
 
       name_fields.each do |name_key|
-        names << GoogleSpreadsheetConversion.underscore_from_text(row_map[name_key]) if row_map[name_key].present?
+        names << DriveTime.underscore_from_text(row_map[name_key]) if row_map[name_key].present?
       end
 
       names.each_with_index do |name, index|
