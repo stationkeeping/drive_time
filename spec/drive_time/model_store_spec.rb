@@ -25,7 +25,6 @@ module DriveTime
       end
 
       context 'when the same model is added twice' do
-
         it 'should raise a ModelAddedTwiceError' do
           @model_store.add_model(@model_a, 'model_a')
           expect { @model_store.add_model(@model_a, 'model_a') }.to raise_error(ModelStore::ModelAddedTwiceError) 

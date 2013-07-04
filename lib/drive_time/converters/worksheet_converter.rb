@@ -58,7 +58,7 @@ module DriveTime
 
       # Build hash ready to pass into model
       model_fields = row_fields_to_model_fields mapping, row_map
-      Logger.info "Creating Model with Model Fields #{model_fields.to_s}"
+      Logger.info "Creating Model of class #{clazz.name.to_s} with Model Fields #{model_fields.to_s}"
       # Create new model
       model = clazz.new model_fields, without_protection: true
       # Add its associations
