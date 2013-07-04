@@ -105,7 +105,7 @@ module DriveTime
             models = []
             # If a builder is defined, transform the cell contents
             if value['builder']
-              cell_value = cell_value_from_builder value, row_map, models
+              cell_value = cell_value_from_builder value, row_map, models, class_name
             else # It's a single text value, so convert it to an ID
               cell_value = row_map[class_name.underscore]
               raise MissingAssociationError, "No field #{class_name.underscore} to satisfy association" if cell_value.blank?
@@ -151,7 +151,7 @@ module DriveTime
          model.save!
       end
 
-      def cell_value_from_builder(value, row_map, models)
+      def cell_value_from_builder(value, row_map, models, class_name)
         if value['builder'] == 'multi' # It's a multi value, find a matching cell and split its value by comma
           cell_value = row_map[class_name.underscore.pluralize]
           raise MissingAssociationError "No field #{class_name.underscore.pluralize} to satisfy multi association" if cell_value.blank? && value['optional'] != true;
