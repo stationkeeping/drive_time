@@ -8,6 +8,7 @@ require 'active_support'
 
 require 'drive_time/model_store'
 require 'drive_time/spreadsheet_loader'
+require 'drive_time/builders/join_builder'
 require 'drive_time/builders/name_builder'
 require 'drive_time/converters/spreadsheets_converter'
 require 'drive_time/converters/spreadsheet_converter'

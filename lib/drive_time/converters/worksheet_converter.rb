@@ -128,7 +128,6 @@ module DriveTime
 
           # We now have one or more models with which to associate our model
           models.each do |associated_model|
-
             Logger.info "Model #{associated_model}"
             unless value['inverse'] == true
               association_name = class_name.underscore
