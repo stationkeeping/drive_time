@@ -104,6 +104,7 @@ module DriveTime
           models = []
           # If a converter is defined, transform the cell contents
           if value['builder']
+
             if value['builder'] == 'multi' # It's a multi value, find a matching cell and split its value by comma
               cell_value = row_map[class_name.underscore.pluralize]
               raise MissingAssociationError "No field #{class_name.underscore.pluralize} to satisfy multi association" if cell_value.blank? && value['optional'] != true;
@@ -167,7 +168,9 @@ module DriveTime
     def key_for_model(mapping, row_map)
       key_node = mapping['key']
       if key_node.is_a? Hash
-        if key_node['builder'] == 'name'
+        if key_node['builder'] == 'join'
+          key = JoinBuilder.build key_node['from_fields'], row_map
+        elsif key_node['builder'] == 'name'
           key = NameBuilder.build key_node['from_fields'], row_map
         else
           raise "No builder for key on worksheet #{mapping['title']}"
