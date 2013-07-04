@@ -105,7 +105,7 @@ module DriveTime
             models = []
             # If a builder is defined, transform the cell contents
             if value['builder']
-              cell_value = cell_value_from_builder cell_value, row_map
+              cell_value = cell_value_from_builder value, row_map
             else # It's a single text value, so convert it to an ID
               cell_value = row_map[class_name.underscore]
               raise MissingAssociationError, "No field #{class_name.underscore} to satisfy association" if cell_value.blank?
@@ -176,7 +176,7 @@ module DriveTime
       end
 
       def get_id_for_model(mapping, row_map)
-        key_node = mapping['key']
+        i_node = mapping['key']
         if key_node.is_a? Hash
           if key_node['builder'] == 'join'
             key = JoinBuilder.new.build key_node['from_fields'], row_map
