@@ -155,7 +155,7 @@ module DriveTime
         if value['builder'] == 'multi' # It's a multi value, find a matching cell and split its value by comma
           cell_value = row_map[class_name.underscore.pluralize]
           raise MissingAssociationError "No field #{class_name.underscore.pluralize} to satisfy multi association" if cell_value.blank? && value['optional'] != true;
-          components = value.split ','
+          components = cell_value.split ','
           components.each do |component|
             models << get_model_for_id(DriveTime.underscore_from_text(component), class_name)
           end
