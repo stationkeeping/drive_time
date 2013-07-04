@@ -162,8 +162,8 @@ module DriveTime
         elsif value['builder'] == 'use_fields' # Use column names as values if cell contains 'yes' or 'y'
           value['field_names'].each do |field_name|
             cell_value = row_map[field_name]
-            if DriveTime.is_affirmative? field_value
-              models << get_model_for_id(field_name, class_name)
+            if DriveTime.is_affirmative? cell_value
+              models << get_model_for_id(cell_value, class_name)
             end
           end
         end
