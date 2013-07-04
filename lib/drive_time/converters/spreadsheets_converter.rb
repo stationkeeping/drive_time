@@ -44,7 +44,7 @@ module DriveTime
         end
 
         # Now that dependencies are checked and ordered, convert load Worksheets
-        @dependency_graph.resolved_dependencies.each{|spreadsheet| SpreadsheetConverter.new spreadsheet, @model_store }
+        @dependency_graph.resolved_dependencies.each{|spreadsheet| SpreadsheetConverter.new(@model_store).convert(spreadsheet) }
       end
   end
   

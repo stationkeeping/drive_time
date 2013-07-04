@@ -2,14 +2,12 @@ module DriveTime
 
   class SpreadsheetConverter
 
-    def initialize(spreadsheet, model_store)
+    def initialize(model_store)
       @dependency_graph = DeepEnd::Graph.new
       @model_store = model_store
-      convert spreadsheet
     end
 
     def convert(spreadsheet)
-
       worksheets = []
       # First get the worksheets
       if spreadsheet.mapping['worksheets']
@@ -38,7 +36,7 @@ module DriveTime
         @dependency_graph.add_dependency worksheet, associations
       end 
       # Convert the worksheets
-      @dependency_graph.resolved_dependencies.each{|worksheet| WorksheetConverter.new worksheet, @model_store }
+      @dependency_graph.resolved_dependencies.each{|worksheet| WorksheetConverter.new(@model_store).convert(worksheet) }
     end
   end
 end
