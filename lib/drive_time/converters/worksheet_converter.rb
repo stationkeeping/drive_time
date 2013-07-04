@@ -176,7 +176,7 @@ module DriveTime
       end
 
       def get_id_for_model(mapping, row_map)
-        i_node = mapping['key']
+        key_node = mapping['key']
         if key_node.is_a? Hash
           if key_node['builder'] == 'join'
             key = JoinBuilder.new.build key_node['from_fields'], row_map
