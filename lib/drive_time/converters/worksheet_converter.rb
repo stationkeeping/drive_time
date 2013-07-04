@@ -169,9 +169,9 @@ module DriveTime
       key_node = mapping['key']
       if key_node.is_a? Hash
         if key_node['builder'] == 'join'
-          key = JoinBuilder.build key_node['from_fields'], row_map
+          key = JoinBuilder.new.build key_node['from_fields'], row_map
         elsif key_node['builder'] == 'name'
-          key = NameBuilder.build key_node['from_fields'], row_map
+          key = NameBuilder.new.build key_node['from_fields'], row_map
         else
           raise "No builder for key on worksheet #{mapping['title']}"
         end

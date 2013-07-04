@@ -7,7 +7,7 @@ module DriveTime
     class NoFieldsError < StandardError; end
 
     # Fields to use for names
-    def self.build(field_keys, row_map)
+    def build(field_keys, row_map)
       values = []
 
       field_keys.each do |field_key|
@@ -25,7 +25,7 @@ module DriveTime
 
     protected
 
-      def self.process_value(value)
+      def process_value(value)
         return value
       end
 
