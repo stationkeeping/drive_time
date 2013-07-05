@@ -23,8 +23,9 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency 'rake'
   gem.add_development_dependency 'rspec'
-  
+  gem.add_development_dependency 'dotenv'
+  gem.add_development_dependency "activemodel", "3.2.13"
   gem.add_development_dependency "activerecord", "3.2.13"
-  gem.add_development_dependency "activesupport"
+  gem.add_development_dependency "activesupport", "3.2.13"
 
 end

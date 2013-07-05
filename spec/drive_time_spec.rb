@@ -73,9 +73,6 @@ module DriveTime
         end
 
         context 'with full spreadsheet and mapping' do
-
-
-
             it 'should load spreadsheet and map to models' do
                 mappings_path = File.join(File.dirname(__FILE__),'fixtures/mapping.yml')
                 converter = SpreadsheetsConverter.new 

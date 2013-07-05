@@ -28,13 +28,22 @@ module DriveTime
       # Now sort their dependencies before converting them
       worksheets.each do |worksheet|
         associations = []
-        # Run through each association
         if worksheet.mapping['associations']
+          # Run through each association
           worksheet.mapping['associations'].each do |value|
             # And find the worksheet that satisfies it
-            worksheets.each do |worksheet|
-              if DriveTime.underscore_from_text(worksheet.title) == value['name']
-                associations << worksheet
+
+            worksheets.each do |worksheetInner|
+               # If the name matches we have a dependent relationship
+              if DriveTime.underscore_from_text(worksheetInner.title) == value['name']
+
+                unless value['inverse'] == true
+                  # If the value isn't inverse, add it to the list of associations
+                  associations << worksheetInner
+                else
+                  # Add the inverted relationship
+                  @dependency_graph.add_dependency worksheetInner, [worksheet]
+                end
               end
             end
           end
