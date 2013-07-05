@@ -2,64 +2,51 @@ spreadsheets:
 - title: Fixture 1
   dependencies: [Fixture 2]
   worksheets:
-
-    - title: Tag
-      map_to_class: ActsAsTaggableOn::Tag
+    - title: Group
+      map_to_class: Act
       key: name
       fields: 
         name: auto
+        formed: auto
+      associations:
+        - name: members
+          builder: multi
 
-    - title: Author
-      key: 
+    - title: Album
+      key: name
+      fields:
+        year: auto
+      associations:
+        - name: label
+          builder: use_fields
+          field_names: [label_1, label_2, label_3]
+        - name: group
+
+    - title: Label
+      key: name
+      fields:
+        genre: auto
+        website: auto
+
+    - title: Member
+      key:
         builder: name
         from_fields: [forename, middle_names, surname]
       fields:
-        forename: auto
-        surname: auto
-        middle_names: auto
-
-    - title: Region
-      key: name
-      fields:
-        name: auto
-        description: auto
-
-    - title: Research Project
-      key: name
-      fields:
-        name: auto
-        description: auto
+        year_of_birth: auto
+        year_of_death: auto
         year: auto
 
-    - title: Archive Resource
-      key: 
+- title: Fixture 2
+  worksheets:
+    - title: Track
+      key:
         builder: join
-        from_fields: [name, type]
-      associations:
-        - name: region
-          builder: use_fields
-          field_names: [global, south_asia, west_africa, middle_east, latin_america]
-        - name: research_project
-          inverse: true
-        - name: theme
-        - name: author
-          builder: multi
-          optional: true
+        from_fields: [name, remix]
       fields:
         name: auto
-        type: auto
-        summary: auto
-        year: auto
-        cost: auto
-        physical_location: auto
-        file_name: auto
-        url_location: auto
-        url_description: auto
-
-    - title: Theme
-      key: name
-      fields: 
-        name: auto
-        description: auto
-
-- title: Pathways News archive
+        remix: auto
+        duration: auto
+      associations:
+        - name: album
+          inverse: true

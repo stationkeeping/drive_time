@@ -1,0 +1,12 @@
+--- !ruby/object:GoogleDrive::Spreadsheet
+session: !ruby/object:GoogleDrive::Session
+  fetcher: !ruby/object:GoogleDrive::ClientLoginFetcher
+    proxy: !ruby/class 'Net::HTTP'
+    auth_tokens:
+      :wise: DQAAAMgAAADFTdFcDFIkOwERwawyJAqB5nwLvlDLrlj2NDMuVYsu9JQ7x2rz8zwlxKPA_RjU0GqPLsKUpOAeYTAixKOaNkFV2a37jP6AaqaiW90PKBu2NnlDZ6ZpeOAt_K99PvPIpqgC9Sdu2wgLrYWWgYAhAqfAalxrxfB0Vwu3PKFjG4TSwoRlEA4rQ-OHjeLuYNem2XuGU7-FvzBfLYWeYdCiiu-XXtNfJVVqyr2bV8GlQ8xQCHvmCHdF3-GYyZ6A1IIvMSaY1XQiDgPH9e-63T2htupf
+      :writely: DQAAAMkAAADFTdFcDFIkOwERwawyJAqB5nwLvlDLrlj2NDMuVYsu9JQ7x2rz8zwlxKPA_RjU0Gqgx7QNmyUlxT3widoG_r1JAvTDha-1TbPXSO9HJJlPmw7kkNPMkL-1ltbp6df6AZ0aIRPS0jIDnq9flO9Ct-ZTqfoq7a6IefOFXLhm3DzL6vnwsKHDVkO4MVC7OxBXsJa1gLQ-DFzsF2BFTAphtfhIKOKb_axN0FVzW6wI03SNeIbsnAH1gq3-Ey-p5agUy55I8kqjK47W59GM7CgP6Opp
+document_feed_entry: 
+document_feed_url: 
+acl: 
+worksheets_feed_url: https://spreadsheets.google.com/feeds/worksheets/t2vNx_m_auVznUF20xjVoMQ/private/full
+title: Fixture 2

@@ -20,10 +20,11 @@ Gem::Specification.new do |gem|
   gem.add_dependency "log4r"
   gem.add_dependency "deep_end"
   gem.add_dependency "google_drive"
-  gem.add_dependency "activerecord"
-  gem.add_dependency "activesupport"
 
   gem.add_development_dependency 'rake'
   gem.add_development_dependency 'rspec'
+  
+  gem.add_development_dependency "activerecord", "3.2.13"
+  gem.add_development_dependency "activesupport"
 
 end

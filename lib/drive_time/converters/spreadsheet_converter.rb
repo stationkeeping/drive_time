@@ -2,17 +2,23 @@ module DriveTime
 
   class SpreadsheetConverter
 
-    def initialize(model_store)
+    def initialize(model_store, loader)
       @dependency_graph = DeepEnd::Graph.new
       @model_store = model_store
+      @loader = loader
     end
 
     def convert(spreadsheet)
       worksheets = []
       # First get the worksheets
       if spreadsheet.mapping['worksheets']
+
         spreadsheet.mapping['worksheets'].each do |worksheet_mapping|
-          worksheet = spreadsheet.worksheet_by_title worksheet_mapping['title']
+          puts '--------------------'
+          puts worksheet_mapping.class.name
+          puts worksheet_mapping.inspect
+          title = worksheet_mapping['title']
+          worksheet = @loader.load_worksheet_from_spreadsheet spreadsheet, title
           raise "No worksheet with a title: #{worksheet_mapping['title']} available" if worksheet.nil?
           worksheet.mapping = worksheet_mapping
           worksheets << worksheet
@@ -35,8 +41,11 @@ module DriveTime
         end
         @dependency_graph.add_dependency worksheet, associations
       end 
+
       # Convert the worksheets
-      @dependency_graph.resolved_dependencies.each{|worksheet| WorksheetConverter.new(@model_store).convert(worksheet) }
+      @dependency_graph.resolved_dependencies.each do |worksheet|
+        WorksheetConverter.new(@model_store).convert(worksheet)
+      end
     end
   end
 end

@@ -19,7 +19,7 @@ module DriveTime
         spreadsheets = []
         # First download the spreadsheets
         mappings['spreadsheets'].each do |spreadsheet_mapping|
-          spreadsheet =  @loader.load(spreadsheet_mapping['title'])
+          spreadsheet =  @loader.load_spreadsheet(spreadsheet_mapping['title'])
           raise "No spreadsheet with a title: #{spreadsheet_mapping['title']} available" if spreadsheet.nil?
           spreadsheet.mapping = spreadsheet_mapping
           spreadsheets << spreadsheet
@@ -44,7 +44,7 @@ module DriveTime
         end
 
         # Now that dependencies are checked and ordered, convert load Worksheets
-        @dependency_graph.resolved_dependencies.each{|spreadsheet| SpreadsheetConverter.new(@model_store).convert(spreadsheet) }
+        @dependency_graph.resolved_dependencies.each{|spreadsheet| SpreadsheetConverter.new(@model_store, @loader).convert(spreadsheet) }
       end
   end
   

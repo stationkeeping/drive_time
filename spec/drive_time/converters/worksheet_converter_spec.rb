@@ -1,10 +1,9 @@
-include 'spec_helper'
+require 'spec_helper'
 
 module DriveTime
 
   describe WorksheetConverter do
 
-    
 
   end
 

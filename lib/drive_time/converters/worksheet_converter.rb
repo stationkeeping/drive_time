@@ -18,7 +18,7 @@ module DriveTime
       begin
         clazz = class_name.constantize
       rescue
-        raise NoClassError, "Worksheet named #{worksheet.title} doesn't exists as class #{class_name}"
+        raise NoClassWithTitleError, "Worksheet named #{worksheet.title} doesn't exists as class #{class_name}"
       end
 
       rows = worksheet.rows.dup
@@ -61,7 +61,7 @@ module DriveTime
         model_fields = row_fields_to_model_fields mapping, row_map
         Logger.info "Creating Model of class #{clazz.name.to_s} with Model Fields #{model_fields.to_s}"
         # Create new model
-        model = clazz.new model_fields, without_protection: true
+        model = clazz.new(model_fields, without_protection: true)
         # Add its associations
         add_associations model, mapping, row_map
         # Store the model using its ID
@@ -98,7 +98,7 @@ module DriveTime
             begin
               clazz = class_name.constantize
             rescue
-              raise NoClassError, "Association defined in worksheet #{mapping['title']} doesn't exist as class #{class_name}"
+              raise NoClassWithTitleError, "Association defined in worksheet #{mapping['title']} doesn't exist as class #{class_name}"
             end
 
             # Assemble model instances that have already been created to satisfy associations 
