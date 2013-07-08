@@ -10,7 +10,6 @@ module DriveTime
       @dependency_graph = DeepEnd::Graph.new
       @loader = DriveTime::SpreadsheetLoader.new
       @model_store = ModelStore.new
-      Logger.info "CREATED INIT"
     end
 
     # Load mappings YML file
@@ -22,7 +21,10 @@ module DriveTime
     protected
 
       def convert
+          Logger.info "> 2"
           spreadsheets = order_spreadsheets_by_dependencies(download_spreadsheets)
+
+          Logger.info "> 3"
           # Now that dependencies are checked and ordered, convert load Worksheets
           spreadsheets.each{|spreadsheet| SpreadsheetConverter.new(@model_store, @loader).convert(spreadsheet) }
       end
