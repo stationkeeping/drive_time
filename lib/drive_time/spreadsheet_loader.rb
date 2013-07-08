@@ -65,11 +65,12 @@ module DriveTime
     def load_worksheet_from_spreadsheet(spreadsheet, title, use_cache=true)
       cached_directory = ENV['CACHED_DIR']
       worksheet_name = "#{title}.yml"
-      worksheet_file_path = File.join(cached_directory, title)
+      
       worksheet = nil
 
       # Get the worksheet from the cache
       if cached_directory && use_cache
+        worksheet_file_path = File.join(cached_directory, title)
         if File.exist? worksheet_file_path
           File.open(worksheet_file_path, 'r') do |file|
             Logger.info "Pulling worksheet '#{title}' from cache"
