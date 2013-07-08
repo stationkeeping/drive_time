@@ -15,10 +15,6 @@ module DriveTime
       cached_directory = ENV['CACHED_DIR']
       Logger.info 'CACHED DIR '+cached_directory.to_s
       spreadsheet_name = "#{title}.yml"
-       Logger.info '____________ '+spreadsheet_name.to_s
-
-
-
 
       spreadsheet_file_path = nil;
       if cached_directory
@@ -26,8 +22,6 @@ module DriveTime
          spreadsheet_file_path = File.join(cached_directory, spreadsheet_name) 
       end
 
-
-      spreadsheet_file_path = File.join(cached_directory, spreadsheet_name) 
       Logger.info "FILEPATH "+spreadsheet_file_path
       spreadsheet = nil
 
