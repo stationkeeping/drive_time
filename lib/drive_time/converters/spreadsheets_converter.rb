@@ -15,7 +15,7 @@ module DriveTime
     # Load mappings YML file
     def load(mappings_path)
       @mappings = ActiveSupport::HashWithIndifferentAccess.new(YAML::load File.open(mappings_path))
-      #convert
+      convert
     end
 
     protected
@@ -23,7 +23,7 @@ module DriveTime
       def convert
           spreadsheets = order_spreadsheets_by_dependencies(download_spreadsheets)
           # Now that dependencies are checked and ordered, convert load Worksheets
-          spreadsheets.each{|spreadsheet| SpreadsheetConverter.new(@model_store, @loader).convert(spreadsheet) }
+          #spreadsheets.each{|spreadsheet| SpreadsheetConverter.new(@model_store, @loader).convert(spreadsheet) }
       end
 
       def download_spreadsheets
