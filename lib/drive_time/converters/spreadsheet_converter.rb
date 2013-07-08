@@ -56,7 +56,7 @@ module DriveTime
                 associations << worksheet
               else
                 # Add the inverted relationship immediately
-                @dependency_graph.add_dependency worksheetInner, [dependent_worksheet]
+                @dependency_graph.add_dependency worksheet, [dependent_worksheet]
               end
             end
           end
