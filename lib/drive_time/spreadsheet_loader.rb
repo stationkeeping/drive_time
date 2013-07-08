@@ -15,6 +15,11 @@ module DriveTime
       cached_directory = ENV['CACHED_DIR']
       Logger.info 'CACHED DIR '+cached_directory.to_s
       spreadsheet_name = "#{title}.yml"
+       Logger.info '____________ '+spreadsheet_name.to_s
+
+
+
+
       spreadsheet_file_path = nil;
       if cached_directory
          Logger.info "CACHED DIR EXISTS "+cached_directory.inspect
