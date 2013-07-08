@@ -31,6 +31,7 @@ module DriveTime
         spreadsheets = []
         # First download the spreadsheets
         @mappings[:spreadsheets].each do |spreadsheet_mapping|
+          Logger.info 'SPREADSHEET: '+spreadsheet_mapping.inspect
           spreadsheet =  @loader.load_spreadsheet(spreadsheet_mapping[:title])
           raise "No spreadsheet with a title: #{spreadsheet_mapping['title']} available" if spreadsheet.nil?
           # Store mapping on the spreadsheet
@@ -43,10 +44,8 @@ module DriveTime
       def order_spreadsheets_by_dependencies(spreadsheets)
         # Now sort their dependencies before converting them
         spreadsheets.each do |spreadsheet|
-          Logger.info 'SPREADSHEET: '+spreadsheet.inspect
           dependencies = []
           mapped_dependencies = spreadsheet.mapping[:dependencies]
-          Logger.info 'DEPEDNDENCIES: '+mapped_dependencies
           if mapped_dependencies
             # Run through each dependency
             mapped_dependencies.each do |dependency_title|
