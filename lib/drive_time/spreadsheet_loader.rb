@@ -13,7 +13,7 @@ module DriveTime
     def load_spreadsheet(title, use_cache=true)
       Logger.info 'TITLE '+title
       cached_directory = ENV['CACHED_DIR']
-      Logger.info 'CACHED DIR '+cached_directory
+      Logger.info 'CACHED DIR '+cached_directory.to_s
       spreadsheet_name = "#{title}.yml"
       #spreadsheet_file_path = File.join(cached_directory, spreadsheet_name) if cached_directory
 
