@@ -6,7 +6,6 @@ module DriveTime
   class SpreadsheetsConverter
 
     def initialize()
-      Logger.info 'Beginning Spreadsheet Conversion'
       @dependency_graph = DeepEnd::Graph.new
       @loader = DriveTime::SpreadsheetLoader.new
       @model_store = ModelStore.new
@@ -22,7 +21,6 @@ module DriveTime
 
       def convert
           spreadsheets = order_spreadsheets_by_dependencies(download_spreadsheets)
-
           # Now that dependencies are checked and ordered, convert load Worksheets
           spreadsheets.each{|spreadsheet| SpreadsheetConverter.new(@model_store, @loader).convert(spreadsheet) }
       end
@@ -31,7 +29,6 @@ module DriveTime
         spreadsheets = []
         # First download the spreadsheets
         @mappings[:spreadsheets].each do |spreadsheet_mapping|
-          Logger.info 'SPREADSHEET: '+spreadsheet_mapping[:title].inspect
           spreadsheet =  @loader.load_spreadsheet(spreadsheet_mapping[:title])
           raise "No spreadsheet with a title: #{spreadsheet_mapping['title']} available" if spreadsheet.nil?
           # Store mapping on the spreadsheet
