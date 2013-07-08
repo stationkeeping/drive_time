@@ -7,15 +7,15 @@ module DriveTime
 
     def initialize()
       Logger.info 'Beginning Spreadsheet Conversion'
-      #@dependency_graph = DeepEnd::Graph.new
-      #@loader = DriveTime::SpreadsheetLoader.new
-      #@model_store = ModelStore.new
+      @dependency_graph = DeepEnd::Graph.new
+      @loader = DriveTime::SpreadsheetLoader.new
+      @model_store = ModelStore.new
     end
 
     # Load mappings YML file
     def load(mappings_path)
       @mappings = ActiveSupport::HashWithIndifferentAccess.new(YAML::load File.open(mappings_path))
-      convert
+      #convert
     end
 
     protected
