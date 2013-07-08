@@ -18,7 +18,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
 
   gem.add_dependency "log4r"
-  gem.add_dependency "deep_end"
+  gem.add_dependency "deep_end", "~> 0.0.4"
   gem.add_dependency "google_drive"
 
   gem.add_development_dependency 'rake'
