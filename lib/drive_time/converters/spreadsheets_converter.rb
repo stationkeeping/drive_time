@@ -23,7 +23,7 @@ module DriveTime
       def convert
           spreadsheets = order_spreadsheets_by_dependencies(download_spreadsheets)
           # Now that dependencies are checked and ordered, convert load Worksheets
-          #spreadsheets.each{|spreadsheet| SpreadsheetConverter.new(@model_store, @loader).convert(spreadsheet) }
+          spreadsheets.each{|spreadsheet| SpreadsheetConverter.new(@model_store, @loader).convert(spreadsheet) }
       end
 
       def download_spreadsheets
@@ -42,8 +42,10 @@ module DriveTime
       def order_spreadsheets_by_dependencies(spreadsheets)
         # Now sort their dependencies before converting them
         spreadsheets.each do |spreadsheet|
+          puts 'SPREADSHEET: '+spreadsheet.inspect
           dependencies = []
           mapped_dependencies = spreadsheet.mapping[:dependencies]
+          puts 'DEPEDNDENCIES: '+mapped_dependencies
           if mapped_dependencies
             # Run through each dependency
             mapped_dependencies.each do |dependency_title|
