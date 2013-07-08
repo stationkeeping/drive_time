@@ -30,9 +30,9 @@ module DriveTime
       key = DriveTime.underscore_from_text(key)
       clazz = instance.class.to_s
       @logger.info "Adding model with key #{key} of class #{instance.class.to_s}"
-      if @store[clazz].blank?
+      if !@store[clazz]
         @store[clazz] = {} 
-      elsif @store[clazz][key].present?
+      elsif @store[clazz][key]
         raise ModelAddedTwiceError, "#{instance} has already been added to model store" 
       end
       @store[clazz][key] = instance
@@ -43,14 +43,14 @@ module DriveTime
 
       models_for_class = @store[clazz.to_s]
       # Are there any classes of this type in the store?
-      if models_for_class.blank?
+      if models_for_class.nil?
         raise NoModelsOfClassInStoreError, "No classes of type: #{clazz} in model store"
       end
 
       # Is there an instance
       model = models_for_class[key] 
 
-      if model.blank?
+      if !model
         raise NoModelOfClassWithKeyInStoreError, "No model of class #{clazz} with a key of #{key} in model store"
       end
       

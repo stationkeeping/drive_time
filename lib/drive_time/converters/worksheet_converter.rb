@@ -6,13 +6,17 @@ module DriveTime
     class IllegalMappingError < StandardError; end
     class MissingAssociationError < StandardError; end
 
-    def initialize(model_store)
+    def initialize(model_store, name_class_map)
+      @name_class_map = name_class_map
       @model_store = model_store
     end
 
     def convert(worksheet)
       # Use the spreadsheet name unless 'map_to_class' is set
-      class_name = worksheet.mapping['map_to_class'] || DriveTime.class_name_from_title(worksheet.title)
+
+      class_name = DriveTime.class_name_from_title(worksheet.title)
+      mapped_class_name = worksheet.mapping[:map_to_class]
+      class_name = @name_class_map.save_mapping(class_name, mapped_class_name)
       Logger.info "Converting Worksheet #{worksheet.title} to class #{class_name}"
       # Check class exists - better we know immediately
       begin
@@ -88,12 +92,8 @@ module DriveTime
         if mapping['associations']
           mapping['associations'].each do |value|
             # Use the spreadsheet name unless 'map_to_class' is set
-            unless value['map_to_class'].present?
-              class_name = value['name'].classify
-            else
-              class_name = value['map_to_class']
-            end
-
+            class_name = @name_class_map.resolve_mapped_from_original value['name'].classify
+            
             # Get class reference using class name
             begin
               clazz = class_name.constantize
@@ -107,9 +107,12 @@ module DriveTime
             if value['builder']
               cell_value = cell_value_from_builder value, row_map, models, class_name
             else # It's a single text value, so convert it to an ID
-              cell_value = row_map[class_name.underscore]
-              raise MissingAssociationError, "No field #{class_name.underscore} to satisfy association" if cell_value.blank?
-              models << get_model_for_id(cell_value, clazz)
+              cell_value = row_map[@name_class_map.resolve_original_from_mapped(class_name).underscore]
+              raise MissingAssociationError, "No field #{class_name.underscore} to satisfy association" if !cell_value
+
+              unless value.has_key? 'inverse'
+                models << get_model_for_id(cell_value, clazz)
+              end
             end
 
             # We now have one or more models with which to associate our model
@@ -119,11 +122,13 @@ module DriveTime
                 association_name = class_name.underscore
                 if value['singular'] == true
                   Logger.info "- Adding association #{associated_model} to #{model}::#{association_name}"
-                  model.send association_name, associated_model
+                  # Set the association
+                  model.send("#{association_name}=", associated_model)
                 else
                   association_name = association_name.pluralize
-                  associations = model.send association_name
+                  associations = model.send(association_name)
                   Logger.info "- Adding association #{associated_model} to #{model}::#{association_name}"
+                  # Push the association
                   associations << associated_model
                 end
               else # The relationship is actually inverted, so save the model as an association on the associated_model
@@ -133,7 +138,6 @@ module DriveTime
                   associated_model.send model_name, model
                 else
                   model_name = model_name.pluralize
-                  puts '- assoc name'+model_name.pluralize
                   associations = associated_model.send model_name
                   Logger.info "- Adding association #{model} to #{associated_model}::#{model_name}"
                   associations << model
@@ -153,12 +157,16 @@ module DriveTime
 
       def cell_value_from_builder(value, row_map, models, class_name)
         if value['builder'] == 'multi' # It's a multi value, find a matching cell and split its value by comma
+
           cell_value = row_map[class_name.underscore.pluralize]
-          raise MissingAssociationError "No field #{class_name.underscore.pluralize} to satisfy multi association" if cell_value.blank? && value['optional'] != true;
+          raise MissingAssociationError "No field #{class_name.underscore.pluralize} to satisfy multi association" if !cell_value && value['optional'] != true;
           components = cell_value.split ','
+
           components.each do |component|
+
             models << get_model_for_id(DriveTime.underscore_from_text(component), class_name)
           end
+
         elsif value['builder'] == 'use_fields' # Use column names as values if cell contains 'yes' or 'y'
           value['field_names'].each do |field_name|
             cell_value = row_map[field_name]

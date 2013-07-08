@@ -3,33 +3,36 @@ require 'active_record'
 require 'dotenv'
 
 # Load environmental variables
+Dotenv.load
 
-class Base < ActiveRecord::Base
+class Base
 
+    def initialize(data, params)
+    end
 
+    def save!
+    end
 end
 
-class Track < Base
-
-end
-
-puts Track.new({}, without_protection: true)
+# Mapped from Group
 
 class Act < Base
-
+    attr_accessor :members
+    def initialize(data, params)
+        self.members = Array.new
+    end
 end
 
 class Album < Base
-
+    attr_accessor :label
+    attr_accessor :act
 end
 
-class Label < Base
+class Label < Base; end
 
-end
+class Member < Base; end
 
-class Member < Base
-
-end
+class Track < Base; end
 
 module DriveTime
 
@@ -50,8 +53,8 @@ module DriveTime
         end
 
         it 'should process a title to a class' do
-            input_string = "Example Title Class"
-            expected_string = "ExampleTitleClass"
+            input_string = "Nonsense Things"
+            expected_string = "NonsenseThing"
             result_string = DriveTime.class_name_from_title input_string
             result_string.should == expected_string
         end

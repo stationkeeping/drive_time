@@ -4,57 +4,66 @@ module DriveTime
 
     def initialize(model_store, loader)
       @dependency_graph = DeepEnd::Graph.new
+      @class_name_map = ClassNameMap.new
       @model_store = model_store
       @loader = loader
     end
 
     def convert(spreadsheet)
-      worksheets = []
-      # First get the worksheets
-      if spreadsheet.mapping['worksheets']
+      @spreadsheet = spreadsheet
+      worksheets = order_worksheets_by_dependencies( load_worksheets spreadsheet.mapping[:worksheets] )
+      # Convert the worksheets
+      worksheets.each do |worksheet|
+        WorksheetConverter.new(@model_store, @class_name_map).convert(worksheet)
+      end
+    end
 
-        spreadsheet.mapping['worksheets'].each do |worksheet_mapping|
-          puts '--------------------'
-          puts worksheet_mapping.class.name
-          puts worksheet_mapping.inspect
-          title = worksheet_mapping['title']
-          worksheet = @loader.load_worksheet_from_spreadsheet spreadsheet, title
+    def load_worksheets(worksheet_mappings)
+      worksheets = []
+      if worksheet_mappings
+        worksheet_mappings.each do |worksheet_mapping|
+          title = worksheet_mapping[:title]
+          worksheet = @loader.load_worksheet_from_spreadsheet @spreadsheet, title
           raise "No worksheet with a title: #{worksheet_mapping['title']} available" if worksheet.nil?
           worksheet.mapping = worksheet_mapping
           worksheets << worksheet
         end
       end
+      return worksheets
+    end
 
+    def order_worksheets_by_dependencies(worksheets)
       # Now sort their dependencies before converting them
       worksheets.each do |worksheet|
-        associations = []
-        if worksheet.mapping['associations']
-          # Run through each association
-          worksheet.mapping['associations'].each do |value|
-            # And find the worksheet that satisfies it
+        associations = find_associations worksheet, worksheets
+        @dependency_graph.add_dependency worksheet, associations
+      end 
+      return @dependency_graph.resolved_dependencies
+    end
 
-            worksheets.each do |worksheetInner|
-               # If the name matches we have a dependent relationship
-              if DriveTime.underscore_from_text(worksheetInner.title) == value['name']
-
-                unless value['inverse'] == true
-                  # If the value isn't inverse, add it to the list of associations
-                  associations << worksheetInner
-                else
-                  # Add the inverted relationship
-                  @dependency_graph.add_dependency worksheetInner, [worksheet]
-                end
+    def find_associations(dependent_worksheet, worksheets)
+      associations_mapping = dependent_worksheet.mapping[:associations]
+      associations = []
+      if associations_mapping
+        # Run through each association
+        associations_mapping.each do |association_mapping|
+          # And find the worksheet that satisfies it
+          worksheets.each do |worksheet|
+             # If the name matches we have a dependent relationship
+            if DriveTime.underscore_from_text(worksheet.title) == association_mapping[:name]
+              unless association_mapping[:inverse] == true
+                # If the value isn't inverse, add it to the list of associations
+                associations << worksheet
+              else
+                # Add the inverted relationship immediately
+                @dependency_graph.add_dependency worksheetInner, [dependent_worksheet]
               end
             end
           end
         end
-        @dependency_graph.add_dependency worksheet, associations
-      end 
-
-      # Convert the worksheets
-      @dependency_graph.resolved_dependencies.each do |worksheet|
-        WorksheetConverter.new(@model_store).convert(worksheet)
       end
+      return associations
     end
+
   end
 end
