@@ -22,7 +22,7 @@ module DriveTime
          spreadsheet_file_path = File.join(cached_directory, spreadsheet_name) 
       end
 
-      Logger.info "FILEPATH "+spreadsheet_file_path
+      Logger.info "FILEPATH "+spreadsheet_file_path.inspect
       spreadsheet = nil
 
       # Try and pull the file from the cache
