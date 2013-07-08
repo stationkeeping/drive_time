@@ -31,7 +31,7 @@ module DriveTime
         spreadsheets = []
         # First download the spreadsheets
         @mappings[:spreadsheets].each do |spreadsheet_mapping|
-          Logger.info 'SPREADSHEET: '+spreadsheet_mapping.inspect
+          Logger.info 'SPREADSHEET: '+spreadsheet_mapping[:title].inspect
           spreadsheet =  @loader.load_spreadsheet(spreadsheet_mapping[:title])
           raise "No spreadsheet with a title: #{spreadsheet_mapping['title']} available" if spreadsheet.nil?
           # Store mapping on the spreadsheet

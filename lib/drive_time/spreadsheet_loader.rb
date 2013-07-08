@@ -15,6 +15,8 @@ module DriveTime
       cached_directory = ENV['CACHED_DIR']
       spreadsheet_name = "#{title}.yml"
       spreadsheet_file_path = File.join(cached_directory, spreadsheet_name)
+
+      Logger.info "FILEPATH "+spreadsheet_file_path
       spreadsheet = nil
 
       # Try and pull the file from the cache
