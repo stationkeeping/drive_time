@@ -10,6 +10,7 @@ module DriveTime
       @dependency_graph = DeepEnd::Graph.new
       @loader = DriveTime::SpreadsheetLoader.new
       @model_store = ModelStore.new
+      Logger.info "CREATED INIT"
     end
 
     # Load mappings YML file
