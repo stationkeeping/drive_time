@@ -15,7 +15,7 @@ module DriveTime
     # Load mappings YML file
     def load(mappings_path)
       @mappings = ActiveSupport::HashWithIndifferentAccess.new(YAML::load File.open(mappings_path))
-      #convert
+      convert
     end
 
     protected
