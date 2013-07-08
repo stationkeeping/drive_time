@@ -14,7 +14,7 @@ module DriveTime
 
       cached_directory = ENV['CACHED_DIR']
       spreadsheet_name = "#{title}.yml"
-      spreadsheet_file_path = File.join(cached_directory, spreadsheet_name) if cached_directory
+      #spreadsheet_file_path = File.join(cached_directory, spreadsheet_name) if cached_directory
 
       Logger.info "FILEPATH "+spreadsheet_file_path
       spreadsheet = nil
