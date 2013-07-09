@@ -5,6 +5,8 @@ require 'google_drive'
 require 'deep_end'
 require 'log4r'
 require 'active_support'
+require 'active_support/inflector'
+require 'active_support/core_ext/hash'
 
 require 'drive_time/mapping'
 require 'drive_time/model_store'

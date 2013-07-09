@@ -8,8 +8,8 @@ spreadsheets:
       map_to_class: Act
       key: name
       fields: 
-        name: auto
-        formed: auto
+        - name: name
+        - name: formed
       associations:
         - name: member
           builder: multi
@@ -17,7 +17,7 @@ spreadsheets:
     - title: Album
       key: name
       fields:
-        year: auto
+        - name: year
       associations:
         - name: label
           builder: use_fields
@@ -29,15 +29,17 @@ spreadsheets:
     - title: Label
       key: name
       fields:
-        genre: auto
-        website: auto
+        - name: genre
+        - name: website
 
     - title: Member
       key: name
       fields:
-        year_of_birth: auto
-        year_of_death: auto
-        year: auto
+        - name: name
+        - name: real_name
+        #  from_fields: [forename, middle_names, surname]
+        - name: year_of_birth
+        - name: year_of_death
 
 - title: Fixture 2
   worksheets:
@@ -46,9 +48,9 @@ spreadsheets:
         builder: join
         from_fields: [name, remix]
       fields:
-        name: auto
-        remix: auto
-        duration: auto
+        - name: name
+        - name: remix
+        - name: duration
       associations:
         - name: album
           inverse: true

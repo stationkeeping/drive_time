@@ -50,4 +50,12 @@ tmp
 _yardoc
 doc/
 
+# Ruby Gems 
+#########################
+
 Gemfile.lock
+
+# Project Specific
+#########################
+
+# spec/fixtures/cached/*
