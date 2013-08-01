@@ -10,17 +10,19 @@ module DriveTime
       @session = GoogleDrive.login( ENV['GOOGLE_USERNAME'], ENV['GOOGLE_PASSWORD'])
     end
 
+    def load_file_direct(title)
+      return @session.file_by_title title
+    end
+
+    def load_spreadsheet_direct(title)
+      @session.spreadsheet_by_title title
+    end
+
     def load_spreadsheet(title, use_cache=true)
-      Logger.info 'TITLE '+title
       cached_directory = ENV['CACHED_DIR']
-      Logger.info 'CACHED DIR '+cached_directory.to_s
       spreadsheet_name = "#{title}.yml"
-
       spreadsheet_file_path = File.join(cached_directory, spreadsheet_name) if cached_directory
-
-      Logger.info "FILEPATH "+spreadsheet_file_path.inspect
       spreadsheet = nil
-
       # Try and pull the file from the cache
       if cached_directory && use_cache
         

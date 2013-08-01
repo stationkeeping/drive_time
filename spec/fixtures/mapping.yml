@@ -1,5 +1,3 @@
---- !map:HashWithIndifferentAccess
-
 spreadsheets:
 - title: Fixture 1
   dependencies: [Fixture 2]

@@ -1,5 +1,3 @@
-require "log4r"
-
 module DriveTime 
 
   # Store model instances by class and link

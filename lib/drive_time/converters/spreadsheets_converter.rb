@@ -1,6 +1,4 @@
 module DriveTime
-  
-
 
   class SpreadsheetsConverter
 

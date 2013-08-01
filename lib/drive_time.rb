@@ -10,6 +10,7 @@ require 'active_support/core_ext/hash'
 
 require 'drive_time/mapping'
 require 'drive_time/model_store'
+require 'drive_time/field_expander'
 require 'drive_time/bi_directional_hash'
 require 'drive_time/spreadsheet_loader'
 require 'drive_time/class_name_map'

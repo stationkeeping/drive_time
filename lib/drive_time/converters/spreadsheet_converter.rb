@@ -14,7 +14,7 @@ module DriveTime
       worksheets = order_worksheets_by_dependencies( load_worksheets spreadsheet.mapping[:worksheets] )
       # Convert the worksheets
       worksheets.each do |worksheet|
-        WorksheetConverter.new(@model_store, @class_name_map).convert(worksheet)
+        WorksheetConverter.new(@model_store, @class_name_map, @loader).convert(worksheet)
       end
     end
 
@@ -47,16 +47,30 @@ module DriveTime
       if associations_mapping
         # Run through each association
         associations_mapping.each do |association_mapping|
-          # And find the worksheet that satisfies it
-          worksheets.each do |worksheet|
-             # If the name matches we have a dependent relationship
-            if DriveTime.underscore_from_text(worksheet.title) == association_mapping[:name]
-              unless association_mapping[:inverse] == true
-                # If the value isn't inverse, add it to the list of associations
-                associations << worksheet
-              else
-                # Add the inverted relationship immediately
-                @dependency_graph.add_dependency worksheet, [dependent_worksheet]
+
+          # Handle possible polymorphic association
+          # If name is an array, we need to add each possibility as a dependency
+          names = []
+          if association_mapping[:name].is_a? Array
+            names = association_mapping[:name]
+          else
+            names << association_mapping[:name]
+          end
+
+          names.each do |name|
+            # And find the worksheet that satisfies it
+            worksheets.each do |worksheet|
+               # If the name matches we have a dependent relationship
+              if DriveTime.underscore_from_text(worksheet.title) == name
+                #unless association_mapping[:inverse] == true
+                  # If the value isn't inverse, add it to the list of associations
+                  associations << worksheet
+                # else
+                #   puts '********************************************************************************'
+                #   puts 'WORKSHEET: '+worksheet.title + ' > '+dependent_worksheet.title
+                #   # Add the inverted relationship immediately
+                #   @dependency_graph.add_dependency worksheet, [dependent_worksheet]
+                # end
               end
             end
           end
