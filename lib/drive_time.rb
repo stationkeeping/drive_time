@@ -47,8 +47,7 @@ module DriveTime
     text.
       strip.
       downcase.
-      tr(" ", "_").
-      tr("-", "_")
+      tr(" ", "_")
   end
 
   def self.class_name_from_title(title)
