@@ -44,10 +44,7 @@ module DriveTime
   end
 
   def self.underscore_from_text(text)
-    text.
-      strip.
-      downcase.
-      tr(" ", "_")
+    text.strip.downcase.parameterize('_')
   end
 
   def self.class_name_from_title(title)
