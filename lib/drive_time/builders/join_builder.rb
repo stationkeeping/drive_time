@@ -1,6 +1,7 @@
 module DriveTime
 
   # Take a series of name fields. Look up their values and assemble them into a single id
+  # For example it might build a name from a model's title and its amount
   class JoinBuilder
 
     class MissingFieldError < StandardError; end
@@ -11,7 +12,7 @@ module DriveTime
       values = []
 
       field_keys.each do |field_key|
-        raise MissingFieldError, "No field for key #{field_key}" if !row_map.has_key? field_key     
+        raise MissingFieldError, "No field for key #{field_key}" if !row_map.has_key? field_key
         values << DriveTime.underscore_from_text(row_map[field_key]) unless row_map[field_key].empty?
       end
 
@@ -21,7 +22,7 @@ module DriveTime
 
         result = self.process_value value
         if result
-          values[index] = result 
+          values[index] = result
         end
       end
       values.join('_').downcase
@@ -29,9 +30,9 @@ module DriveTime
 
     protected
 
-      def process_value(value)
-        return value
-      end
+    def process_value(value)
+      return value
+    end
 
   end
 

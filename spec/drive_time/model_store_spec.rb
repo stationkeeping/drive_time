@@ -5,19 +5,19 @@ module DriveTime
 
   describe ModelStore do
 
-    class ModelA 
+    class ModelA
     end
 
-    class ModelB 
+    class ModelB
     end
 
     before(:each) do
       @model_store = ModelStore.new
       @model_a = ModelA.new
       @model_b = ModelB.new
-    end 
+    end
 
-    context 'when models are added' do
+    describe 'when models are added' do
 
       it 'should allow an added model to be retrieved' do
         @model_store.add_model(@model_a, 'model_a')
@@ -27,27 +27,25 @@ module DriveTime
       context 'when the same model is added twice' do
         it 'should raise a ModelAddedTwiceError' do
           @model_store.add_model(@model_a, 'model_a')
-          expect { @model_store.add_model(@model_a, 'model_a') }.to raise_error(ModelStore::ModelAddedTwiceError) 
+          expect { @model_store.add_model(@model_a, 'model_a') }.to raise_error(ModelStore::ModelAddedTwiceError)
         end
 
       end
     end
 
-    context 'when models are retieved' do
+    describe 'when models are retieved' do
 
       it 'should raise a NoModelsOfClassInStoreError if no model is stored of the given type' do
-         @model_store.add_model(@model_a, 'model_a')
-         expect { @model_store.get_model(ModelB, 'model_a') }.to raise_error(ModelStore::NoModelsOfClassInStoreError) 
+        @model_store.add_model(@model_a, 'model_a')
+        expect { @model_store.get_model(ModelB, 'model_a') }.to raise_error(ModelStore::NoModelsOfClassInStoreError)
       end
 
       it 'should raise a NoModelOfClassWithKeyInStoreError if no model is stored of the given type with the given key' do
-         @model_store.add_model(@model_a, 'model_a')
-         expect { @model_store.get_model(ModelA, 'model_b') }.to raise_error(ModelStore::NoModelOfClassWithKeyInStoreError) 
+        @model_store.add_model(@model_a, 'model_a')
+        expect { @model_store.get_model(ModelA, 'model_b') }.to raise_error(ModelStore::NoModelOfClassWithKeyInStoreError)
       end
 
     end
-
-   
 
   end
 end
