@@ -16,6 +16,8 @@ module DriveTime
       worksheets.each do |worksheet|
         WorksheetConverter.new(@model_store, @class_name_map, @loader).convert(worksheet)
       end
+
+      @model_store.save_all
     end
 
     def load_worksheets(worksheet_mappings)
@@ -37,7 +39,7 @@ module DriveTime
       worksheets.each do |worksheet|
         associations = find_associations worksheet, worksheets
         @dependency_graph.add_dependency worksheet, associations
-      end 
+      end
       return @dependency_graph.resolved_dependencies
     end
 
@@ -62,15 +64,7 @@ module DriveTime
             worksheets.each do |worksheet|
                # If the name matches we have a dependent relationship
               if DriveTime.underscore_from_text(worksheet.title) == name
-                #unless association_mapping[:inverse] == true
-                  # If the value isn't inverse, add it to the list of associations
-                  associations << worksheet
-                # else
-                #   puts '********************************************************************************'
-                #   puts 'WORKSHEET: '+worksheet.title + ' > '+dependent_worksheet.title
-                #   # Add the inverted relationship immediately
-                #   @dependency_graph.add_dependency worksheet, [dependent_worksheet]
-                # end
+                associations << worksheet
               end
             end
           end

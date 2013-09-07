@@ -52,6 +52,7 @@ module DriveTime
   end
 
   def self.is_affirmative?(value)
+    return false if !value
     value.
       strip.
       downcase == 'yes' || value.downcase == 'y'

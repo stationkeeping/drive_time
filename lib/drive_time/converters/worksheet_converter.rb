@@ -8,6 +8,7 @@ module DriveTime
     class NoFieldNameError < StandardError; end
     class MissingAssociationError < StandardError; end
     class NoKeyError < StandardError; end
+    class PolymorphicAssociationError < StandardError; end
 
     def initialize(model_store, name_class_map, loader)
       @name_class_map = name_class_map
@@ -63,23 +64,14 @@ module DriveTime
 
         # Set the model key as an attribute on the model
         if mapping[:key_to]
-          puts '+++++++++'
-          puts '+++++++++'
-          puts '+++++++++'
-          puts '+++++++++'
-          puts '+++++++++'
-          puts '+++++++++'
-          puts mapping[:key_to]
           model_fields[mapping[:key_to]] = model_key
         end
-
 
         Logger.info "Creating Model of class #{clazz.name.to_s} with Model Fields #{model_fields.to_s}"
         # Create new model
         model = clazz.new(model_fields, without_protection: true)
         # Add its associations
-        add_associations(model, mapping) 
-        model.save!
+        add_associations(model, mapping)
         # Store the model using its ID
         @model_store.add_model model, model_key
       end
@@ -107,7 +99,7 @@ module DriveTime
             unless field_name
               raise NoFieldNameError "Missing Field: Name for field: #{value} in mapping: #{mapping}"
             end
-            
+
             field_value = @row_map[field_name]
             # Check for token pattern: {{some_value}}
             match = /\{\{(.*?)\}\}/.match(field_value)
@@ -125,7 +117,8 @@ module DriveTime
               end
             end
 
-            # Use mapping if it exists
+            # Make sure any empty cells give us nil (rather than an empty string)
+            field_value = nil if field_value.blank?
             model_fields[mapped_to_field_name || field_name] = field_value
 
           end
@@ -137,7 +130,7 @@ module DriveTime
       def add_associations(model, mapping)
         associations_mapping = mapping[:associations]
         if associations_mapping
-          Logger.info "Adding associations to model"
+          Logger.info "Adding associations to model "
 
           # Loop through any associations defined in the mapping for this model
           associations_mapping.each do |association_mapping|
@@ -146,18 +139,22 @@ module DriveTime
               association_class_name = @name_class_map.resolve_mapped_from_original association_mapping[:name].classify
             else
               possible_class_names = association_mapping[:name]
-              type = association_mapping[:polymorphic][:type]
-              association_class_name = DriveTime::class_name_from_title @row_map[type]
+              # The classname will be taken from the type collumn
+              association_class_name = DriveTime::class_name_from_title @row_map[:type]
+              # if !possible_class_names.include? association_class_name.underscore
+              #     raise PolymorphicAssociationError, "Mapping for polymorphic associations: #{possible_class_names.inspect} doesn't include #{association_class_name}"
+              # end
             end
             # Get class reference using class name
             begin
               clazz = association_class_name.constantize
             rescue
-              raise NoClassWithTitleError, "Association defined in worksheet doesn't exist as class #{association_class_name}"
+              raise NoClassWithTitleError, "Association defined in worksheet doesn't exist as class: #{association_class_name}"
             end
 
             # Assemble associated model instances to satisfy this association
             associated_models = gather_associated_models(association_mapping, association_class_name, clazz)
+            puts "ASSOCIATED MODELS #{associated_models.inspect}"
             set_associations_on_model(model, associated_models, association_mapping, association_class_name)
           end
         end
@@ -175,7 +172,8 @@ module DriveTime
             association_id = @row_map[association_mapping[:polymorphic][:association]]
           end
           raise MissingAssociationError, "No field #{association_class_name.underscore} to satisfy association" if !association_id
-          unless association_mapping[:inverse]
+
+          if association_id.length > 0 || association_mapping[:required] == true
             associated_models << model_for_id(association_id, clazz)
           end
         end

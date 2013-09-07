@@ -19,9 +19,6 @@ module DriveTime
           value = value.split('[').first
       end
 
-      puts 'Filename > '+filename.inspect
-      puts 'Token > '+value.inspect
-
       if value == 'expand_file'
         file = @loader.load_file_direct(filename+'.txt');
         if file.blank?
@@ -39,7 +36,7 @@ module DriveTime
       else
         raise TokenExpansionError, "Don't know how to expand the value #{value} for model: #{model_key}"
       end
-      puts 'Returned < '+value.inspect
+      puts 'Returned < ' + value.inspect
       return value
     end
 

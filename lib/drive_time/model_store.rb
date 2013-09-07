@@ -1,4 +1,4 @@
-module DriveTime 
+module DriveTime
 
   # Store model instances by class and link
   # This way we can look them up as needed to
@@ -17,7 +17,7 @@ module DriveTime
       formatter = Log4r::PatternFormatter.new(:pattern => "[%c] %M")
       outputter = Log4r::Outputter.stdout
       outputter.formatter = formatter
-  
+
       @logger = Log4r::Logger.new 'model_store'
       @logger.outputters = outputter
     end
@@ -29,9 +29,9 @@ module DriveTime
       clazz = instance.class.to_s
       @logger.info "Adding model with key #{key} of class #{instance.class.to_s}"
       if !@store[clazz]
-        @store[clazz] = {} 
+        @store[clazz] = {}
       elsif @store[clazz][key]
-        raise ModelAddedTwiceError, "#{instance} has already been added to model store" 
+        raise ModelAddedTwiceError, "#{instance} has already been added to model store"
       end
       @store[clazz][key] = instance
     end
@@ -46,13 +46,24 @@ module DriveTime
       end
 
       # Is there an instance
-      model = models_for_class[key] 
+      model = models_for_class[key]
 
       if !model
         raise NoModelOfClassWithKeyInStoreError, "No model of class #{clazz} with a key of #{key} in model store"
       end
-      
+
       return model
+    end
+
+    def save_all
+      @logger.info "Saving models "
+      @store.each do |key, models|
+        @logger.info "-- Of Type: '#{key}'"
+        models.each do |key, model|
+          @logger.info "---- Model: #{model.inspect}"
+          model.save!
+        end
+      end
     end
 
   end
