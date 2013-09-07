@@ -1,12 +1,12 @@
 module DriveTime
 
-	class ClassNameMap
+  class ClassNameMap
 
-		def initialize
-			@map = BiDirectionalHash.new
-		end
+    def initialize
+      @map = BiDirectionalHash.new
+    end
 
-		 # Check for mapped class
+    # Check for mapped class
     def resolve_original_from_mapped(className)
       if @map.has_key_for_value className
         @map.key_for_value className
@@ -15,7 +15,7 @@ module DriveTime
       end
     end
 
-     def resolve_mapped_from_original(className)
+    def resolve_mapped_from_original(className)
       if @map.has_value_for_key className
         @map.value_for_key className
       else
@@ -34,6 +34,6 @@ module DriveTime
       end
     end
 
-	end
+  end
 
 end

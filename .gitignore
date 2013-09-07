@@ -6,7 +6,7 @@
 
 .env
 
-# Rails 
+# Rails
 #########################
 
 *.rbc
@@ -28,7 +28,7 @@ rerun.txt
 pickle-email-*.html
 .project
 
-# Ruby 
+# Ruby
 #########################
 
 *.gem
@@ -50,7 +50,7 @@ tmp
 _yardoc
 doc/
 
-# Ruby Gems 
+# Ruby Gems
 #########################
 
 Gemfile.lock
@@ -58,4 +58,4 @@ Gemfile.lock
 # Project Specific
 #########################
 
-# spec/fixtures/cached/*
+# /spec/fixtures/cached/*

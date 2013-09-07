@@ -13,7 +13,7 @@ module DriveTime
     def initialize
       @store = {}
 
-        # Set up logging
+      # Set up logging
       formatter = Log4r::PatternFormatter.new(:pattern => "[%c] %M")
       outputter = Log4r::Outputter.stdout
       outputter.formatter = formatter
@@ -23,23 +23,26 @@ module DriveTime
     end
 
     # Store the model by class to avoid key collisions
-    def add_model(instance, key)
+    def add_model(instance, key, clazz)
+      class_string = clazz.to_s
+      puts " ---> Adding Model of class #{clazz}"
       # Sanitise key
       key = DriveTime.underscore_from_text(key)
-      clazz = instance.class.to_s
-      @logger.info "Adding model with key #{key} of class #{instance.class.to_s}"
-      if !@store[clazz]
-        @store[clazz] = {}
-      elsif @store[clazz][key]
+      @logger.info "Adding model with key #{key} of class #{clazz}"
+      if !@store[class_string]
+        @store[class_string] = {}
+      elsif @store[class_string][key]
         raise ModelAddedTwiceError, "#{instance} has already been added to model store"
       end
-      @store[clazz][key] = instance
+      @store[class_string][key] = instance
     end
 
     def get_model(clazz, key)
+      puts " ---> Getting Model of class #{clazz.to_s}"
       @logger.info "Requested model with key #{key} of class #{clazz}"
 
       models_for_class = @store[clazz.to_s]
+      puts models_for_class.inspect
       # Are there any classes of this type in the store?
       if models_for_class.nil?
         raise NoModelsOfClassInStoreError, "No classes of type: #{clazz} in model store"

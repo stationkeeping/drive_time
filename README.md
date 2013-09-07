@@ -1,6 +1,6 @@
 # DriveTime
 
-TODO: Write a gem description
+Drive Time allows you to transform a Google Spredsheet into a Rails model graph.
 
 ## Installation
 
@@ -18,7 +18,7 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Please see the file DOCS.md in the docs folder.
 
 ## Contributing
 

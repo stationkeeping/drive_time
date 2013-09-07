@@ -1,11 +1,11 @@
+namespace: DriveTime
 spreadsheets:
 - title: Fixture 1
-  dependencies: [Fixture 2]
   worksheets:
     - title: Group
       map_to_class: Act
       key: name
-      fields: 
+      fields:
         - name: name
         - name: formed
       associations:
@@ -40,6 +40,7 @@ spreadsheets:
         - name: year_of_death
 
 - title: Fixture 2
+  dependencies: [Fixture 1]
   worksheets:
     - title: Track
       key:

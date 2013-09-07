@@ -1,12 +1,12 @@
 --- !ruby/object:GoogleDrive::Worksheet
-session: &70344547510980 !ruby/object:GoogleDrive::Session
+session: &70195029524220 !ruby/object:GoogleDrive::Session
   fetcher: !ruby/object:GoogleDrive::ClientLoginFetcher
     proxy: !ruby/class 'Net::HTTP'
     auth_tokens:
-      :wise: DQAAAMgAAAAxlAgs0LdMXBfjLVgK8hqbE_LuDA0K1FeifoedShSyHubcoBY_5VD8m7nsRjoVexVreitVJ2wjQoVw1HoDINIS5rWISwOZBDJD2Wsh1Fftr_EdB98PpRdkn5IeSqm6n8zALJlEj8otxqa2xTXnC-A0lxgJk-ntTjnGnTUA6tUAt7pnRJIRJtZrB0aj4nBigpIZpZNNHJoZo9qGHYl0HbXHpAJqEE8I28pLAvKxIF0tfrNWzDyXASsAOd4s9RJGUixxsCNpW8frQiKPeJzG-Gwo
-      :writely: DQAAAMkAAAAxlAgs0LdMXBfjLVgK8hqbE_LuDA0K1FeifoedShSyHubcoBY_5VD8m7nsRjoVexWtZsQRtJhxrSnS7plSTJqiavS91DHV4QSobb1nnsXEnIi5GZY4ulJtGKEchHHVFUdP_K7Xv_5Vxu0yC66K1w1d3dPyeNkoefK7aQWbaMj7znV-yhZxmKGI7kFw75XmE24yV219VDSU5gi7TFk_DGdppVZlVwyK4V52_E8UzFj-27BqZyb8NMNCnVV-5teQM4GsEdImUF8LGP424BLKANxC
+      :wise: DQAAAMkAAACaCwebvWM5y-p5KNYcoE7PpYJAtC8TZJ6Emh0FFuEwPD5Bqfo4UIp_NTjzgo8bbVS_FilkfpEwnQluzRaRpADxY8fiL2I8LLGxBYcUekyc6iXEkoNgDT4WQ-SM-qpxHWNe1y1jArtDYSW-Bp78IifsWXwKNW030DAHu7v12U2jFhuokvoIIPBBpK0Cw_oOTV4yse_UpAj7pKIGpkq0uOJRffj6pamk61J7iBrYJHLd1FuhxzCXlK5Qg-myDKMAx7hsDNFc4K8C7p_Wh8gMFc2f
+      :writely: DQAAAMkAAACaCwebvWM5y-p5KNYcoE7PpYJAtC8TZJ6Emh0FFuEwPD5Bqfo4UIp_NTjzgo8bbVSJQ2vs8GamJnZ-IkHXEipL2V8gwvgAH_Ayt1EQOkJFFCJ4uR77jY_SuVvHKSjiEjMaKiSscyDxxPX_aXO_YY3XY6YuYhe-HpO3bY0VBYgZIEQx5CSVVVp61wunFiWHklOoAUwfWGD_nWSYNitb2-2stUD6kI_wubN_2yVF4KGAsrmzSiApWzNbYYu_V-o4S2dpO7GLR8U87udtYtirVp84
 spreadsheet: !ruby/object:GoogleDrive::Spreadsheet
-  session: *70344547510980
+  session: *70195029524220
   document_feed_entry: 
   document_feed_url: 
   acl: 
@@ -14,7 +14,7 @@ spreadsheet: !ruby/object:GoogleDrive::Spreadsheet
   title: Fixture 1
 cells_feed_url: https://spreadsheets.google.com/feeds/cells/tXKN_0toFhcGNydvMa6eC-w/od6/private/full
 title: Group
-updated: 2013-07-04 21:11:14.535000000 Z
+updated: 2013-09-07 18:58:51.644000000 Z
 cells: 
 input_values: 
 numeric_values: 

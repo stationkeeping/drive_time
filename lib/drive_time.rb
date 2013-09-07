@@ -21,7 +21,7 @@ require 'drive_time/converters/spreadsheet_converter'
 require 'drive_time/converters/worksheet_converter'
 
 module DriveTime
-  
+
   include ActiveSupport::Inflector
   include Log4r
 
@@ -29,7 +29,7 @@ module DriveTime
   formatter = PatternFormatter.new(:pattern => "[%c] %M")
   outputter = Outputter.stdout
   outputter.formatter = formatter
-  
+
   # Create constants for loggers - available in inner classes
   Logger = Log4r::Logger.new 'main'
   Logger.outputters = outputter
