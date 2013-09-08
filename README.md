@@ -1,6 +1,6 @@
 # DriveTime
 
-Drive Time allows you to transform a Google Spredsheet into a Rails model graph.
+Drive Time allows you to transform a one or more Google Spredsheet into a Rails model graph.
 
 ## Installation
 
@@ -19,6 +19,8 @@ Or install it yourself as:
 ## Usage
 
 Please see the file DOCS.md in the docs folder.
+
+*I am using it sucessfully in two projects at the moment, however this is very much alpha and I am adding features as I need them. My main priority is to add more comprehansive tests.*
 
 ## Contributing
 

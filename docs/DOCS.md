@@ -1,10 +1,6 @@
 ### Drive Time
 
-
-Drive Time allows you to map a Google Spreadsheet to a your Rails database. Each worksheet represents a different Model class; its columns represent the model's attributes and each row represents a different instance. It is designed
- to make as many allowances for the person authoring the spreadsheet so it can be used as a bridge between a non-technical user and yourself. Unless they are an idiot, in which case you're still screwed.
-
-*I am using it sucessfully in two projects at the moment, however there are may well be some things that will cause issues that I haven't needed come accross yet.*
+Drive Time allows you to map a Google Spreadsheet to a your Rails database. Each worksheet represents a different Model class; its columns represent the model's attributes and each row represents a different instance. It is designed to make as many allowances for the person authoring the spreadsheet as possible so it can be used as a bridge between a non-technical user and yourself. Unless they are an idiot, in which case you're still screwed.
 
 #### Installation
 
