@@ -1,5 +1,5 @@
 module DriveTime
-  
+
   # Load a Spreadsheet from Google Drive
   class SpreadsheetLoader
 
@@ -25,7 +25,7 @@ module DriveTime
       spreadsheet = nil
       # Try and pull the file from the cache
       if cached_directory && use_cache
-        
+
         if File.exist? spreadsheet_file_path
           File.open(spreadsheet_file_path, 'r') do |file|
             Logger.info "Pulling spreadsheet '#{title}' from cache"
@@ -60,14 +60,14 @@ module DriveTime
           end
         end
       end
-      
+
       return spreadsheet
     end
 
     def load_worksheet_from_spreadsheet(spreadsheet, title, use_cache=true)
       cached_directory = ENV['CACHED_DIR']
       worksheet_name = "#{title}.yml"
-      
+
       worksheet = nil
 
       # Get the worksheet from the cache

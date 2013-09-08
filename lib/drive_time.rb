@@ -8,7 +8,6 @@ require 'active_support/inflector'
 require 'active_support/core_ext/hash'
 require 'active_support/core_ext/module'
 
-require 'drive_time/mapping'
 require 'drive_time/model_store'
 require 'drive_time/field_expander'
 require 'drive_time/bi_directional_hash'
