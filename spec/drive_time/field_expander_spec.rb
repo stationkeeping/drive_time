@@ -16,12 +16,12 @@ module DriveTime
       @valid_expand_file_token_with_filename = "expand_file[#{@valid_file_path}]"
       @valid_expand_spreadsheet_token = "expand_spreadsheet"
       @valid_expand_spreadsheet_token_with_filename = "expand_spreadsheet[#{@valid_file_path}]"
-      @file = {name: 'file'} # need something in the object or Ruby treats it as blank
+      @file = double("file") # need something in the object or Ruby treats it as blank
       @file.stub :initialize
       @file_contents = "12345"
       @model_key = "model_key"
-      @worksheet = {name: 'worksheet'}
-      @spreadsheet = {name: 'spreadsheet'}
+      @worksheet = double("worksheet")
+      @spreadsheet = double('spreadsheet')
     end
 
     context "when supplied with a field containig an invalid token" do
