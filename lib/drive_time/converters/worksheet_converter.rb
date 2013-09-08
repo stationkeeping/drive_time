@@ -19,13 +19,11 @@ module DriveTime
     end
 
     def convert(worksheet)
-      puts '=============================================================================='
-      puts 'CONVERTING WORKSHEET '+worksheet.title
-      puts '=============================================================================='
+      Logger.log_as_header "Converting worksheet: #{worksheet.title}"
       # Use the spreadsheet name unless 'map_to_class' is set
       class_name = DriveTime.class_name_from_title(worksheet.title)
       class_name = @class_name_map.resolve_mapped_from_original class_name
-      Logger.info "Converting Worksheet #{worksheet.title} to class #{class_name}"
+      Logger.debug "Converting Worksheet #{worksheet.title} to class #{class_name}"
       # Check class exists - better we know immediately
       begin
         clazz = namespaced_class_name class_name
@@ -46,19 +44,18 @@ module DriveTime
     protected
 
     def generate_model_from_row(clazz, mapping, fields, row)
-      puts '=============================================================================='
-      puts 'CONVERTING ROW to '+clazz.name
-      puts '=============================================================================='
+      Logger.log_as_header "Converting row to class: #{clazz.name}"
       # Create a hash of field-names and row cell values
       build_row_map(fields, row)
 
       # If a row has been marked as not complete, ignore it
       if @row_map[:complete] == 'No'
-        Logger.info 'Row marked as not complete. Ignoring'
+        Logger.debug 'Row marked as not complete. Ignoring'
         return
       end
 
       model_key = build_id_for_model mapping
+      Logger.log_as_sub_header "Model Key: #{model_key}"
       # Build hash ready to pass into model
       model_fields = row_fields_to_model_fields mapping, model_key
 
@@ -67,25 +64,24 @@ module DriveTime
         model_fields[mapping[:key_to]] = model_key
       end
 
-      Logger.info "Creating Model of class #{clazz.name.to_s} with Model Fields #{model_fields.to_s}"
+      Logger.debug "Creating Model of class '#{clazz.name.to_s}' with Model Fields #{model_fields.to_s}"
       # Create new model
       model = clazz.new(model_fields, without_protection: true)
       # Add its associations
       add_associations(model, mapping)
       # Store the model using its ID
-      puts "11111++++++++ #{clazz}"
       @model_store.add_model model, model_key, clazz
     end
 
     # Convert worksheet row into hash
     def build_row_map(fields, row)
       @row_map = HashWithIndifferentAccess.new
-      Logger.info "Mapping fields to cells"
+      Logger.log_as_sub_header "Mapping fields to cells"
       row.dup.each_with_index do |cell, index|
         # Sanitise
         field_name = DriveTime.underscore_from_text fields[index]
         @row_map[field_name] = row[index]
-        Logger.info "- #{field_name} -> #{row[index]}"
+        Logger.debug "- #{field_name} -> #{row[index]}"
       end
     end
 
@@ -131,7 +127,7 @@ module DriveTime
     def add_associations(model, mapping)
       associations_mapping = mapping[:associations]
       if associations_mapping
-        Logger.info "Adding associations to model "
+        Logger.log_as_sub_header "Adding associations to model "
 
         # Loop through any associations defined in the mapping for this model
         associations_mapping.each do |association_mapping|
@@ -149,7 +145,6 @@ module DriveTime
           # Get class reference using class name
           begin
             clazz = namespaced_class_name association_class_name
-
           rescue
             raise NoClassWithTitleError, "Association defined in worksheet doesn't exist as class: #{association_class_name}"
           end
@@ -162,7 +157,6 @@ module DriveTime
     end
 
     def gather_associated_models(association_mapping, association_class_name, clazz)
-      puts "222222++++++++ #{clazz}"
       associated_models = []
       if association_mapping[:builder]
         associated_models = associated_models_from_builder association_mapping, association_class_name
@@ -174,7 +168,6 @@ module DriveTime
           association_id = @row_map[association_mapping[:polymorphic][:association]]
         end
         raise MissingAssociationError, "No field #{association_class_name.underscore} to satisfy association" if !association_id
-        puts "3333333++++++++ #{clazz}"
         if association_id.length > 0 || association_mapping[:required] == true
           associated_models << model_for_id(association_id, clazz)
         end
@@ -185,29 +178,29 @@ module DriveTime
     def set_associations_on_model(model, associated_models, association_mapping, association_class_name)
       # We now have one or more associated_models to set as associations on our model
       associated_models.each do |associated_model|
-        Logger.info "Model #{associated_model}"
+        Logger.debug " - Associated Model: #{associated_model}"
         unless association_mapping[:inverse] == true
           association_name = association_class_name.underscore
           if association_mapping[:singular] == true
-            Logger.info "- Adding association #{associated_model} to #{model}::#{association_name}"
+            Logger.debug "   - Adding association #{associated_model} to #{model}::#{association_name}"
             # Set the association
             model.send("#{association_name}=", associated_model)
           else
             association_name = association_name.pluralize
             model_associations = model.send(association_name)
-            Logger.info "- Adding association #{associated_model} to #{model}::#{association_name}"
+            Logger.debug "   - Adding association #{associated_model} to #{model}::#{association_name}"
             # Push the association
             model_associations << associated_model
           end
         else # The relationship is actually inverted, so save the model as an association on the associated_model
-          model_name = model.class.name.underscore
+          model_name = model.class.name.split('::').last.underscore
           if association_mapping[:singular] == true
-            Logger.info "- Adding association #{model} to #{associated_model}::#{association_name}"
+            Logger.debug "   - Adding association #{model} to #{associated_model}::#{association_name}"
             associated_model.send model_name, model
           else
             model_name = model_name.pluralize
             model_associations = associated_model.send model_name
-            Logger.info "- Adding association #{model} to #{associated_model}::#{model_name}"
+            Logger.debug "   - Adding association #{model} to #{associated_model}::#{model_name}"
             model_associations << model
           end
         end
@@ -220,11 +213,9 @@ module DriveTime
         cell_value = @row_map[class_name.underscore.pluralize]
         raise MissingAssociationError "No field #{class_name.underscore.pluralize} to satisfy multi association" if !cell_value && association_mapping[:optional] != true
         components = cell_value.split ','
-
         components.each do |component|
           associated_models << model_for_id(component, namespaced_class_name(class_name))
         end
-
       elsif association_mapping[:builder] == 'use_fields' # Use column names as values if cell contains 'yes' or 'y'
         association_mapping[:field_names].each do |field_name|
           cell_value = @row_map[field_name]
@@ -263,7 +254,6 @@ module DriveTime
 
     def namespaced_class_name class_name
       class_name = "#{@namespace}::#{class_name}" unless @namespace.blank?
-      puts "@@@@@@@@@@@@@@@@ #{class_name}"
       class_name.constantize
     end
   end

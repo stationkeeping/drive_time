@@ -1,8 +1,6 @@
 require 'dotenv'
 require 'drive_time'
+require "log4r"
 
 Dotenv.load
-
-module DriveTime
-
-end
+DriveTime::log_level = Log4r::DEBUG

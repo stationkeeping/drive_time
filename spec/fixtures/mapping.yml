@@ -1,55 +1,55 @@
 namespace: DriveTime
 spreadsheets:
-- title: Fixture 1
-  worksheets:
-    - title: Group
-      map_to_class: Act
-      key: name
-      fields:
-        - name: name
-        - name: formed
-      associations:
-        - name: member
-          builder: multi
+  - title: Fixture 1
+    worksheets:
+      - title: Group
+        map_to_class: Act
+        key: name
+        fields:
+          - name: name
+          - name: formed
+        associations:
+          - name: member
+            builder: multi
 
-    - title: Album
-      key: name
-      fields:
-        - name: year
-      associations:
-        - name: label
-          builder: use_fields
-          field_names: [label_1, label_2, label_3]
-          singular: true
-        - name: act
-          singular: true
+      - title: Album
+        key: name
+        fields:
+          - name: year
+        associations:
+          - name: label
+            builder: use_fields
+            field_names: [label_1, label_2, label_3]
+            singular: true
+          - name: act
+            singular: true
 
-    - title: Label
-      key: name
-      fields:
-        - name: genre
-        - name: website
+      - title: Label
+        key: name
+        fields:
+          - name: genre
+          - name: website
 
-    - title: Member
-      key: name
-      fields:
-        - name: name
-        - name: real_name
-        #  from_fields: [forename, middle_names, surname]
-        - name: year_of_birth
-        - name: year_of_death
+      - title: Member
+        key: name
+        fields:
+          - name: name
+          - name: real_name
+          #  from_fields: [forename, middle_names, surname]
+          - name: year_of_birth
+          - name: year_of_death
 
-- title: Fixture 2
-  dependencies: [Fixture 1]
-  worksheets:
-    - title: Track
-      key:
-        builder: join
-        from_fields: [name, remix]
-      fields:
-        - name: name
-        - name: remix
-        - name: duration
-      associations:
-        - name: album
-          inverse: true
+  - title: Fixture 2
+    dependencies: [Fixture 1]
+    worksheets:
+      - title: Track
+        key:
+          builder: join
+          from_fields: [name, remix]
+        fields:
+          - name: name
+          - name: remix
+          - name: duration
+        associations:
+          - name: album
+            inverse: true

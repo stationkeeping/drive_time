@@ -3,10 +3,10 @@ require "drive_time/version"
 require "log4r"
 require 'google_drive'
 require 'deep_end'
-require 'log4r'
 require 'active_support'
 require 'active_support/inflector'
 require 'active_support/core_ext/hash'
+require 'active_support/core_ext/module'
 
 require 'drive_time/mapping'
 require 'drive_time/model_store'
@@ -17,10 +17,31 @@ require 'drive_time/class_name_map'
 require 'drive_time/builders/join_builder'
 require 'drive_time/builders/name_builder'
 require 'drive_time/converters/spreadsheets_converter'
-require 'drive_time/converters/spreadsheet_converter'
 require 'drive_time/converters/worksheet_converter'
 
+module Log4r
+  class Logger
+    def log_as_header(message)
+      puts "\n"
+      info "=============================================================================="
+      info "#{message}"
+      info '=============================================================================='
+    end
+
+    def log_as_sub_header(message)
+      puts "\n" if self.level <= DEBUG
+      debug "--------------------------------------------------------------------------------"
+      debug "  #{message}"
+      debug '--------------------------------------------------------------------------------'
+    end
+  end
+end
+
 module DriveTime
+
+  mattr_accessor :log_level
+
+  class MissingAssociationError < StandardError; end
 
   include ActiveSupport::Inflector
   include Log4r
@@ -30,8 +51,10 @@ module DriveTime
   outputter = Outputter.stdout
   outputter.formatter = formatter
 
+  @@log_level = INFO
   # Create constants for loggers - available in inner classes
-  Logger = Log4r::Logger.new 'main'
+  Logger = Log4r::Logger.new ' Primary     '
+  Logger.level = @@log_level
   Logger.outputters = outputter
 
   # Store the mapping on the spreadsheets and worksheets
@@ -56,6 +79,11 @@ module DriveTime
     value.
       strip.
       downcase == 'yes' || value.downcase == 'y'
+  end
+
+  def self.log_level=(log_level)
+    @@log_level = log_level
+    Logger.level = log_level
   end
 
 end

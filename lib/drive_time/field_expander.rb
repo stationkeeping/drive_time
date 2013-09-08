@@ -1,22 +1,22 @@
 module DriveTime
 
-	class FieldExpander
+  class FieldExpander
 
     class TokenExpansionError < StandardError; end
 
     def initialize(loader)
-    	@loader = loader
+      @loader = loader
     end
 
-		def expand(value, model_key)
-			filename = model_key
-			# Check for token
+    def expand(value, model_key)
+      filename = model_key
+      # Check for token
       match = /\[(.*?)\]/.match(value)
       # Expand token into file
       # Is there a different filename defined in hard brackets [file_name]
       if match
-          filename = match[1]
-          value = value.split('[').first
+        filename = match[1]
+        value = value.split('[').first
       end
 
       if value == 'expand_file'
@@ -36,35 +36,34 @@ module DriveTime
       else
         raise TokenExpansionError, "Don't know how to expand the value #{value} for model: #{model_key}"
       end
-      puts 'Returned < ' + value.inspect
       return value
     end
 
     # Build a JSON object from the columns
-  	def expand_worksheet(worksheet)
-	    rows = worksheet.rows.dup
+    def expand_worksheet(worksheet)
+      rows = worksheet.rows.dup
 
-	    # Take the first row which will be the column names and use the cell value as the field name
-	    fields = rows.shift.map{ |row|  row[/\w+/] }
-	    
-	    instances = []
-	    # Reject rows of only empty strings (empty cells). 
-	    rows.reject! {|row| row.all?(&:empty?)}
+      # Take the first row which will be the column names and use the cell value as the field name
+      fields = rows.shift.map{ |row|  row[/\w+/] }
 
-	    rows.each do |row|
-	      key_value_pairs = [fields.dup, row.dup].transpose
-	      hash = Hash[*key_value_pairs.flatten]
-	      instances.push(hash)
-	    end
+      instances = []
+      # Reject rows of only empty strings (empty cells).
+      rows.reject! {|row| row.all?(&:empty?)}
 
-	    root = {objects: instances }
-	    return root.to_json.to_s
-		end
+      rows.each do |row|
+        key_value_pairs = [fields.dup, row.dup].transpose
+        hash = Hash[*key_value_pairs.flatten]
+        instances.push(hash)
+      end
+
+      root = {objects: instances }
+      return root.to_json.to_s
+    end
 
     def expand_file(file)
       return file.download_to_string()
     end
 
-	end
+  end
 
 end

@@ -10,7 +10,7 @@ module DriveTime
     class NoModelOfClassWithKeyInStoreError < StandardError; end
     class ModelAddedTwiceError < StandardError; end
 
-    def initialize
+    def initialize(log_level=INFO)
       @store = {}
 
       # Set up logging
@@ -18,17 +18,17 @@ module DriveTime
       outputter = Log4r::Outputter.stdout
       outputter.formatter = formatter
 
-      @logger = Log4r::Logger.new 'model_store'
+      @logger = Log4r::Logger.new ' Model Store '
+      @logger.level = log_level
       @logger.outputters = outputter
     end
 
     # Store the model by class to avoid key collisions
     def add_model(instance, key, clazz)
       class_string = clazz.to_s
-      puts " ---> Adding Model of class #{clazz}"
       # Sanitise key
       key = DriveTime.underscore_from_text(key)
-      @logger.info "Adding model with key #{key} of class #{clazz}"
+      @logger.debug "Adding model with key #{key} of class #{clazz}"
       if !@store[class_string]
         @store[class_string] = {}
       elsif @store[class_string][key]
@@ -38,11 +38,9 @@ module DriveTime
     end
 
     def get_model(clazz, key)
-      puts " ---> Getting Model of class #{clazz.to_s}"
-      @logger.info "Requested model with key #{key} of class #{clazz}"
+      @logger.debug "Request for model with key #{key} of class #{clazz}"
 
       models_for_class = @store[clazz.to_s]
-      puts models_for_class.inspect
       # Are there any classes of this type in the store?
       if models_for_class.nil?
         raise NoModelsOfClassInStoreError, "No classes of type: #{clazz} in model store"
@@ -59,11 +57,8 @@ module DriveTime
     end
 
     def save_all
-      @logger.info "Saving models "
       @store.each do |key, models|
-        @logger.info "-- Of Type: '#{key}'"
         models.each do |key, model|
-          @logger.info "---- Model: #{model.inspect}"
           model.save!
         end
       end

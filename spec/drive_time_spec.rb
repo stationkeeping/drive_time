@@ -27,6 +27,10 @@ module DriveTime
   class Album < Base
     attr_accessor :label
     attr_accessor :act
+    attr_accessor :tracks
+    def initialize(data, params)
+      self.tracks = Array.new
+    end
   end
 
   class Label < Base; end
@@ -36,9 +40,6 @@ module DriveTime
   class Track < Base; end
 
   describe DriveTime do
-
-
-
 
     it 'should process string correctly' do
 
