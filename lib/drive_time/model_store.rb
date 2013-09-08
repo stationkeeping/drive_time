@@ -1,4 +1,8 @@
+require 'log4r'
+
 module DriveTime
+
+  include Log4r
 
   # Store model instances by class and link
   # This way we can look them up as needed to
@@ -10,7 +14,7 @@ module DriveTime
     class NoModelOfClassWithKeyInStoreError < StandardError; end
     class ModelAddedTwiceError < StandardError; end
 
-    def initialize(log_level=INFO)
+    def initialize(log_level=Log4r::INFO)
       @store = {}
 
       # Set up logging

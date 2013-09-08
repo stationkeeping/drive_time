@@ -1,5 +1,7 @@
 module DriveTime
 
+  # This is a fluid two-way map. In both directions it will return a mapping if it exists, otherwise
+  # it will return the value passed to it. It does not raise an exception if a mapping is not found.
   class ClassNameMap
 
     def initialize
@@ -23,8 +25,8 @@ module DriveTime
       end
     end
 
-    def save_mapping(class_name, mapped_class_name)
-
+    # Accepts String versions of class names eg. ExampleClass
+    def save_mapping(class_name, mapped_class_name=nil)
       if mapped_class_name
         # Save mapping so we can look it up from both directions
         @map.insert(class_name, mapped_class_name)

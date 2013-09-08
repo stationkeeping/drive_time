@@ -1,43 +1,8 @@
 require 'spec_helper'
-require 'active_record'
-
-# Load environmental variables
-Dotenv.load
-
-class Base
-
-  def initialize(data, params)
-  end
-
-  def save!
-  end
-end
 
 # Mapped from Group
 
 module DriveTime
-
-  class Act < Base
-    attr_accessor :members
-    def initialize(data, params)
-      self.members = Array.new
-    end
-  end
-
-  class Album < Base
-    attr_accessor :label
-    attr_accessor :act
-    attr_accessor :tracks
-    def initialize(data, params)
-      self.tracks = Array.new
-    end
-  end
-
-  class Label < Base; end
-
-  class Member < Base; end
-
-  class Track < Base; end
 
   describe DriveTime do
 
@@ -73,15 +38,6 @@ module DriveTime
       DriveTime.is_affirmative?('N').should be_false
       DriveTime.is_affirmative?('Yeses').should be_false
       DriveTime.is_affirmative?('Example').should be_false
-    end
-
-    context 'with full spreadsheet and mapping' do
-      it 'should load spreadsheet and map to models' do
-        mappings_path = File.join(File.dirname(__FILE__),'fixtures/mapping.yml')
-        converter = SpreadsheetsConverter.new
-        converter.load mappings_path
-      end
-
     end
 
   end

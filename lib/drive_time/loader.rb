@@ -1,13 +1,13 @@
 module DriveTime
 
   # Load a Spreadsheet from Google Drive
-  class SpreadsheetLoader
+  class Loader
 
     class SpreadsheetNotFoundError < StandardError; end
     class WorksheetNotFoundError < StandardError; end
 
     def initialize
-      @session = GoogleDrive.login( ENV['GOOGLE_USERNAME'], ENV['GOOGLE_PASSWORD'])
+      begin_session
     end
 
     def load_file_direct(title)
@@ -88,6 +88,12 @@ module DriveTime
       end
 
       return worksheet
+    end
+
+    protected
+
+    def begin_session
+      @session = GoogleDrive.login( ENV['GOOGLE_USERNAME'], ENV['GOOGLE_PASSWORD'])
     end
 
   end

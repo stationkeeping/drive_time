@@ -24,10 +24,11 @@ module DriveTime
         @model_store.get_model(ModelA, 'model_a').should == @model_a
       end
 
-      context 'when the same model is added twice' do
+      describe 'when the same model is added twice' do
+
         it 'should raise a ModelAddedTwiceError' do
           @model_store.add_model(@model_a, 'model_a', ModelA)
-          expect { @model_store.add_model(@model_a, 'model_a') }.to raise_error(ModelStore::ModelAddedTwiceError)
+          expect { @model_store.add_model(@model_a, 'model_a', ModelA) }.to raise_error(ModelStore::ModelAddedTwiceError)
         end
 
       end

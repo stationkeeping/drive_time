@@ -1,8 +1,10 @@
 module DriveTime
 
+  class TokenExpansionError < StandardError; end
+
   class FieldExpander
 
-    class TokenExpansionError < StandardError; end
+
 
     def initialize(loader)
       @loader = loader
@@ -38,6 +40,8 @@ module DriveTime
       end
       return value
     end
+
+    protected
 
     # Build a JSON object from the columns
     def expand_worksheet(worksheet)

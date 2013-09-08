@@ -6,7 +6,7 @@ module DriveTime
   VALID_SPREADSHEET_2_TITLE = 'Fixture 2'
   INVALID_SPREADSHEET_TITLE = 'Invalid Title xccdtyyehdyd56ejr6'
 
-  describe SpreadsheetLoader do
+  describe Loader do
 
     def last_access_time_for_cached_file(title)
       cached_directory = ENV['CACHED_DIR']
@@ -28,7 +28,7 @@ module DriveTime
     end
 
     before(:each ) do
-      @loader = SpreadsheetLoader.new
+      @loader = Loader.new
     end
 
     context 'When not using cache' do
@@ -36,7 +36,7 @@ module DriveTime
       context 'when accessing a spreadsheet' do
 
         it "should raise a SpreadsheetNotFoundError if a spreadsheet doesn't exist" do
-          expect{ @loader.load_spreadsheet(INVALID_SPREADSHEET_TITLE, false) }.to raise_error(SpreadsheetLoader::SpreadsheetNotFoundError)
+          expect{ @loader.load_spreadsheet(INVALID_SPREADSHEET_TITLE, false) }.to raise_error(Loader::SpreadsheetNotFoundError)
         end
 
         it "should download a Spreadsheet sucessfully" do
@@ -52,7 +52,7 @@ module DriveTime
         end
 
         it "should raise a SpreadsheetNotFoundError if a worksheet doesn't exist" do
-          expect{ @loader.load_worksheet_from_spreadsheet(@spreadsheet, 'nmgsgscg', false) }.to raise_error(SpreadsheetLoader::WorksheetNotFoundError)
+          expect{ @loader.load_worksheet_from_spreadsheet(@spreadsheet, 'nmgsgscg', false) }.to raise_error(Loader::WorksheetNotFoundError)
         end
 
         it "should download a Worksheet sucessfully" do
@@ -87,7 +87,7 @@ module DriveTime
           cached_file_exists(VALID_SPREADSHEET_1_TITLE).should be_true
         end
 
-         it "should save the spreadsheet's worksheets to the cache" do
+        it "should save the spreadsheet's worksheets to the cache" do
           clear_cache_dir
           @loader.load_spreadsheet(VALID_SPREADSHEET_1_TITLE)
           cached_file_exists('Label').should be_true
@@ -95,7 +95,6 @@ module DriveTime
           cached_file_exists('Album').should be_true
           cached_file_exists('Group').should be_true
         end
-
 
       end
 

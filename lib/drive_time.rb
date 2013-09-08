@@ -11,30 +11,13 @@ require 'active_support/core_ext/module'
 require 'drive_time/model_store'
 require 'drive_time/field_expander'
 require 'drive_time/bi_directional_hash'
-require 'drive_time/spreadsheet_loader'
+require 'drive_time/loader'
 require 'drive_time/class_name_map'
 require 'drive_time/builders/join_builder'
 require 'drive_time/builders/name_builder'
 require 'drive_time/converters/spreadsheets_converter'
 require 'drive_time/converters/worksheet_converter'
-
-module Log4r
-  class Logger
-    def log_as_header(message)
-      puts "\n"
-      info "=============================================================================="
-      info "#{message}"
-      info '=============================================================================='
-    end
-
-    def log_as_sub_header(message)
-      puts "\n" if self.level <= DEBUG
-      debug "--------------------------------------------------------------------------------"
-      debug "  #{message}"
-      debug '--------------------------------------------------------------------------------'
-    end
-  end
-end
+require 'drive_time/logging'
 
 module DriveTime
 

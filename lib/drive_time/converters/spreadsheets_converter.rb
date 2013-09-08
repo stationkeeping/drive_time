@@ -4,7 +4,7 @@ module DriveTime
 
     def initialize()
       @dependency_graph = DeepEnd::Graph.new
-      @loader = DriveTime::SpreadsheetLoader.new
+      @loader = DriveTime::Loader.new
       @model_store = ModelStore.new(DriveTime::log_level)
       @class_name_map = ClassNameMap.new
     end
