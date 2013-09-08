@@ -1,6 +1,8 @@
 ### Drive Time
 
-Drive Time allows you to map a Google Spreadsheet to a your Rails database. Each worksheet represents a different Model class; its columns represent the model's attributes and each row represents a different instance. It is designed to make as many allowances for the person authoring the spreadsheet so it can be used as a bridge between a non-technical user and yourself. Unless they are an idiot, in which case you're still screwed.
+
+Drive Time allows you to map a Google Spreadsheet to a your Rails database. Each worksheet represents a different Model class; its columns represent the model's attributes and each row represents a different instance. It is designed
+ to make as many allowances for the person authoring the spreadsheet so it can be used as a bridge between a non-technical user and yourself. Unless they are an idiot, in which case you're still screwed.
 
 *I am using it sucessfully in two projects at the moment, however there are may well be some things that will cause issues that I haven't needed come accross yet.*
 
@@ -67,6 +69,8 @@ This will result in a key made from the company name and city combined. This is 
 
 *Note: Internally, keys are just downcased, underscored and whitespace-stripped versions of whater value is ussed for the key.*
 
+*All fields values are run through a markdown parser before they are added to the model.*
+
 ##### Associations
 
 Below an association is declared between the `Company` and the `Product`. It is declared as a singular relationship using the `singular` mapping attribute.
@@ -112,6 +116,14 @@ associations:
     inverse: true
 ```
 
+A final option is to add a comma separated list of keys and use the 'join' builder. A model wil be added for each key:
+
+```
+associations:
+  - name: member
+    builder: multi
+```
+
 A polymorphic association can be declared using:
 
 ```
@@ -125,6 +137,51 @@ It is OK to mix 'polymorphic' and 'singular' for the same association.
 
 Using Google Spreadsheet's data validations can make things much easier on the Spreadsheet end. You can effectively add dropdowns containing values from a fixed list or from another Worksheet column, making sure that only valid values can be added.
 
+##### Caching
+
+By setting an env called `CACHED_DIR` to a directory path, Drive Time will store downloaded spreadsheets there and use them on subsequent occasions. Just delete the contents of the folder or remove the env to reload new versions the next time it runs.
+
+
+```
+CACHED_DIR=/Users/me/path/to/cached/directory
+```
+
+##### File Expansion and Text Docs
+
+If Drive Time encounters a value surrounded by `{{` and `}}` within a database field, it will use this value to load another file from Google Drive and use its content in the place of the field value. Possible values are `expand_spreadsheet` and `expand_file` which can be used to load the content of a spreadsheet or a `.txt` file respectively:
+
+```
+{{expand_spreadsheet}}
+```
+
+And:
+
+```
+{{expand_file}}
+```
+
+In both cases, Drive Time will try to load a file named identically to the key for the model on which the field will be added. To specify a different filename, add it in hard brackets and without an extension:
+
+```
+{{expand_spreadsheet[some_spreadsheet_file_name]}}
+```
+
+And:
+
+```
+{{expand_spreadsheet[some_txt_file_name]}}
+```
+
+In the case of the text file, its contents will simply be added. In the case of a spreadsheet, it will be converted to a JSON object which will be used as the field value.
+
+##### Debugging
+
+By default, Drive Time outputs a minimal set of messages. To enable a much more verbose output, set the log level to DEBUG:
+
+```
+require "log4r"
+DriveTime::log_level = Log4r::DEBUG
+```
 
 ##### Other features
 
