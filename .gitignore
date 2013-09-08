@@ -58,4 +58,4 @@ Gemfile.lock
 # Project Specific
 #########################
 
-/spec/fixtures/cached
+spec/fixtures/cached/**
