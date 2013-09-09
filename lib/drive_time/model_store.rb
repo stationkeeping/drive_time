@@ -63,6 +63,7 @@ module DriveTime
     def save_all
       @store.each do |key, models|
         models.each do |key, model|
+          @logger.debug "Saving Model: #{key} #{model.inspect}"
           model.save!
         end
       end
