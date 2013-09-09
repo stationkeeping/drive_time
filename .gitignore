@@ -59,3 +59,4 @@ Gemfile.lock
 #########################
 
 spec/fixtures/cached/**
+README_DEV.md
