@@ -20,7 +20,8 @@ module DriveTime
         # Create a map containing any class mappings
         build_class_map spreadsheet
         # Download and combine worksheets into single Array
-        worksheets.concat download_worksheets(spreadsheet)
+        downloaded_worksheets = download_worksheets(spreadsheet)
+        worksheets.concat downloaded_worksheets
       end
 
       worksheets = order_worksheets_by_dependencies( worksheets )
@@ -59,8 +60,8 @@ module DriveTime
           worksheet.mapping = worksheet_mapping
           worksheets << worksheet
         end
-        return worksheets
       end
+      return worksheets
     end
 
     def order_worksheets_by_dependencies(worksheets)
@@ -114,10 +115,12 @@ module DriveTime
 
     def build_class_map(spreadsheet)
       worksheets_mapping = spreadsheet.mapping[:worksheets]
-      worksheets_mapping.each do |worksheet_mapping|
-        class_name = DriveTime.class_name_from_title(worksheet_mapping[:title])
-        mapped_class_name = worksheet_mapping[:map_to_class]
-        @class_name_map.save_mapping(class_name, mapped_class_name)
+      if worksheets_mapping.present?
+        worksheets_mapping.each do |worksheet_mapping|
+          class_name = DriveTime.class_name_from_title(worksheet_mapping[:title])
+          mapped_class_name = worksheet_mapping[:map_to_class]
+          @class_name_map.save_mapping(class_name, mapped_class_name)
+        end
       end
     end
 
