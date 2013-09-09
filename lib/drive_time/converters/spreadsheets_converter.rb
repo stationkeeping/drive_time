@@ -32,6 +32,7 @@ module DriveTime
       end
 
       @model_store.save_all
+      Logger.log_as_header "Conversion Complete. Woot Woot."
     end
 
     protected

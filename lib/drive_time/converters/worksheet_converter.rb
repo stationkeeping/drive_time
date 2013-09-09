@@ -39,8 +39,6 @@ module DriveTime
       rows.each do |row|
         generate_model_from_row clazz, worksheet.mapping, fields, row
       end
-
-      Logger.log_as_header "Conversion Complete. Woot Woot."
     end
 
     protected
