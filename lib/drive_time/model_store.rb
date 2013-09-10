@@ -61,14 +61,20 @@ module DriveTime
     end
 
     def save_all
+      @logger.log_as_header "Saving Models"
       @store.each do |key, models|
         models.each do |key, model|
-          @logger.debug "Saving Model: #{key} #{model.inspect}"
-          model.save!
+          #@logger.debug "Saving Model: #{key} #{model.inspect}"
+          begin
+            model.save!
+          rescue Exception => error
+              @logger.warn "Failed To Save Model: #{key}"
+              @logger.warn "Error: #{error}"
+              @logger.warn "#{model.inspect}"
+          end
         end
       end
     end
 
   end
-
 end

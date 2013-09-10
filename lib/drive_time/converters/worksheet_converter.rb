@@ -212,7 +212,7 @@ module DriveTime
       if association_mapping[:builder] == 'multi' # It's a multi value, find a matching cell and split its value by comma
         cell_value = @row_map[class_name.underscore.pluralize]
         raise MissingAssociationError "No field #{class_name.underscore.pluralize} to satisfy multi association" if !cell_value && association_mapping[:optional] != true
-        components = cell_value.split ','
+        components = cell_value.present? ? cell_value.split(',') : []
         components.each do |component|
           associated_models << model_for_id(component, namespaced_class_name(class_name))
         end

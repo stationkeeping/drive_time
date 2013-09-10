@@ -21,7 +21,7 @@ spreadsheets:
             builder: use_fields
             field_names: [label_1, label_2, label_3]
             singular: true
-          - name: act
+          - name: group
             singular: true
 
       - title: Label
