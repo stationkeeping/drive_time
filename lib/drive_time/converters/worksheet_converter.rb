@@ -133,7 +133,7 @@ module DriveTime
         associations_mapping.each do |association_mapping|
           # Use the spreadsheet name unless 'map_to_class' is set
           if !association_mapping[:polymorphic]
-            association_class_name = @class_name_map.resolve_mapped_from_original association_mapping[:name].classify
+            association_class_name = @class_name_map.resolve_mapped_from_original(association_mapping[:name].classify)
           else
             possible_class_names = association_mapping[:name]
             # The classname will be taken from the type collumn
@@ -180,7 +180,7 @@ module DriveTime
       associated_models.each do |associated_model|
         Logger.debug " - Associated Model: #{associated_model}"
         unless association_mapping[:inverse] == true
-          association_name = association_class_name.underscore
+          association_name = association_class_name.split('::').last.underscore
           if association_mapping[:singular] == true
             Logger.debug "   - Adding association #{associated_model} to #{model}::#{association_name}"
             # Set the association
@@ -210,10 +210,18 @@ module DriveTime
     def associated_models_from_builder(association_mapping, class_name)
       associated_models = []
       if association_mapping[:builder] == 'multi' # It's a multi value, find a matching cell and split its value by comma
-        cell_value = @row_map[class_name.underscore.pluralize]
-        raise MissingAssociationError "No field #{class_name.underscore.pluralize} to satisfy multi association" if !cell_value && association_mapping[:optional] != true
+        puts "MULTI class *********#{class_name}"
+        puts "Row Map #{@row_map}"
+        puts "Target #{class_name.underscore.pluralize}"
+        # Use only the classname for the fieldname, discarding namespace
+        field_name = class_name.split("::").last.underscore.pluralize
+        puts "FIELD NAME *********#{field_name}"
+        cell_value = @row_map[field_name]
+        raise MissingAssociationError "No field #{class_name.underscore.pluralize} to satisfy multi association" if cell_value.blank? && association_mapping[:optional] != true
         components = cell_value.present? ? cell_value.split(',') : []
+        puts "Cell Value #{cell_value}"
         components.each do |component|
+          puts "Component #{component.to_s}"
           associated_models << model_for_id(component, namespaced_class_name(class_name))
         end
       elsif association_mapping[:builder] == 'use_fields' # Use column names as values if cell contains 'yes' or 'y'
@@ -224,6 +232,7 @@ module DriveTime
           end
         end
       end
+      puts "MULTI *********#{associated_models.inspect}"
       return associated_models
     end
 

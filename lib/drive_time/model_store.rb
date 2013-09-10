@@ -68,10 +68,11 @@ module DriveTime
           begin
             model.save!
           rescue Exception => error
+              binding.pry
               @logger.warn "Failed To Save Model: #{key}"
               @logger.warn "Error: #{error}"
               @logger.warn "#{model.inspect}"
-          end
+            end
         end
       end
     end
