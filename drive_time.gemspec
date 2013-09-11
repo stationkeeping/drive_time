@@ -17,13 +17,13 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
 
-  gem.add_dependency "log4r"
-  gem.add_dependency "deep_end"
-  gem.add_dependency "google_drive"
+  gem.add_dependency "log4r", "~> 1.1"
+  gem.add_dependency "deep_end", "~> 0.0"
+  gem.add_dependency "google_drive", "~> 0.3"
 
-  gem.add_development_dependency 'rake'
-  gem.add_development_dependency 'rspec'
-  gem.add_development_dependency 'dotenv'
+  gem.add_development_dependency "rake", '~> 10.1'
+  gem.add_development_dependency "rspec", '~> 2.14'
+  gem.add_development_dependency "dotenv", "~> 0.9"
   gem.add_development_dependency "activemodel", "3.2.13"
   gem.add_development_dependency "activerecord", "3.2.13"
   gem.add_development_dependency "activesupport", "3.2.13"
