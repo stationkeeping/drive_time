@@ -6,7 +6,6 @@ module DriveTime
     protected
 
       def process_value(value)
-
         # Add a period to initials
         if value.length == 1
           return "#{value}."

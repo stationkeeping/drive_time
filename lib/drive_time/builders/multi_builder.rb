@@ -12,5 +12,4 @@ module DriveTime
    end
 
   end
-
 end

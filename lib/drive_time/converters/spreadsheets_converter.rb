@@ -104,11 +104,7 @@ module DriveTime
     def worksheet_for_association(name, worksheets)
       # And find the worksheet that satisfies it
       worksheets.each do |worksheet|
-        puts "#{name} --->"
         class_name = DriveTime.class_name_from_title(worksheet.title)
-        puts " --  #{DriveTime.underscore_from_text(worksheet.title)}"
-        #resolved = @class_name_map.resolve_mapped_from_original class_name
-        #puts "Resolved  --  #{resolved}"
         # If the name matches we have a dependent relationship
         if name == DriveTime.underscore_from_text(worksheet.title)
           return worksheet

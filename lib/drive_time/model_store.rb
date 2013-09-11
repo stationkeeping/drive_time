@@ -52,7 +52,7 @@ module DriveTime
 
       # Is there an instance
       model = models_for_class[key]
-      unless model.preset?
+      unless model.present?
         raise NoModelOfClassWithKeyInStoreError, "No model of class #{clazz} with a key of #{key} in model store"
       end
 

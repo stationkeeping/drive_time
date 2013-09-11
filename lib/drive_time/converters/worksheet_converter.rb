@@ -35,7 +35,6 @@ module DriveTime
       fields = rows.shift.map{ |row| row }
       # Reject rows of only empty strings (empty cells).
       rows.reject! {|row| row.all?(&:empty?)}
-
       rows.each do |row|
         generate_model_from_row clazz, worksheet.mapping, fields, row
       end
@@ -70,18 +69,7 @@ module DriveTime
       # Create new model
       model = clazz.new(model_fields, without_protection: true)
 
-      # Invoke any method calls
-      method_calls.each do |method_call|
-        call_step = model
-        methods = method_call["methods"]
-        methods.each_with_index do |method, index|
-          if index == method_call.length - 1
-            call_step.send(method, method_call["value"])
-          else
-            call_step = call_step.send(method)
-          end
-        end
-      end
+      invoke_methods_on_model(model, method_calls)
 
       # Add its associations
       add_associations(model, mapping)
@@ -101,6 +89,21 @@ module DriveTime
       end
     end
 
+    def invoke_methods_on_model(model, method_calls)
+      # Invoke any method calls
+      method_calls.each do |method_call|
+        call_step = model
+        methods = method_call["methods"]
+        methods.each_with_index do |method, index|
+          if index == method_call.length - 1
+            call_step.send(method, method_call["value"])
+          else
+            call_step = call_step.send(method)
+          end
+        end
+      end
+    end
+
     def row_fields_to_method_calls(mapping, model_key)
       method_calls = []
       # Run through the mapping, pulling values from row_map as required
@@ -113,7 +116,7 @@ module DriveTime
             raise NoMethodError "Missing Method: Name for call field: #{field_name} in mapping: #{mapping}"
           end
 
-          field_value = parse_field_value(@row_map[field_name])
+          field_value = parse_field_value(@row_map[field_name], model_key)
 
           # handle multi-values
           if call_mapping[:builder] == "multi"
@@ -139,14 +142,13 @@ module DriveTime
             raise NoFieldNameError "Missing Field: Name for field: #{value} in mapping: #{mapping}"
           end
 
-          field_value = parse_field_value(@row_map[field_name])
+          field_value = parse_field_value(@row_map[field_name], model_key)
           model_fields[mapped_to_field_name || field_name] = field_value
         end
       end
       return model_fields
     end
 
-    # TODO: Refactor this big ugly beast
     def add_associations(model, mapping)
       associations_mapping = mapping[:associations]
       if associations_mapping
@@ -282,9 +284,9 @@ module DriveTime
       class_name.constantize
     end
 
-    def parse_field_value(field_value)
+    def parse_field_value(field_value, model_key)
       if field_value
-        field_value = check_for_token(field_value)
+        field_value = check_for_token(field_value, model_key)
         field_value = check_for_boolean(field_value)
       end
       # Make sure any empty cells give us nil (rather than an empty string)
@@ -292,7 +294,7 @@ module DriveTime
       field_value
     end
 
-    def check_for_token(field_value)
+    def check_for_token(field_value, model_key)
       # Check for token pattern: {{some_value}}
       match = /\{\{(.*?)\}\}/.match(field_value)
       if match
