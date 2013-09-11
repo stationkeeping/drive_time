@@ -1,6 +1,7 @@
 # DriveTime
+[![Gem Version](https://badge.fury.io/rb/drive_time.png)](http://badge.fury.io/rb/drive_time)
 
-Drive Time allows you to transform one or more Google Spreadsheet's into a Rails model graph.
+Drive Time allows you transfer data from one or more Google Spreadsheets to your Rails Models. It supports associations and has a number of useful features to give you choices on how to mapthe data.
 
 ## Installation
 
