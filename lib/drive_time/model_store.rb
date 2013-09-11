@@ -32,6 +32,7 @@ module DriveTime
       class_string = clazz.to_s
       # Sanitise key
       key = DriveTime.underscore_from_text(key)
+
       @logger.debug "Adding model with key #{key} of class #{clazz}"
       if !@store[class_string]
         @store[class_string] = {}
@@ -43,7 +44,6 @@ module DriveTime
 
     def get_model(clazz, key)
       @logger.debug "Request for model with key #{key} of class #{clazz}"
-
       models_for_class = @store[clazz.to_s]
       # Are there any classes of this type in the store?
       if models_for_class.nil?
@@ -52,8 +52,7 @@ module DriveTime
 
       # Is there an instance
       model = models_for_class[key]
-
-      if !model
+      unless model.preset?
         raise NoModelOfClassWithKeyInStoreError, "No model of class #{clazz} with a key of #{key} in model store"
       end
 
@@ -64,14 +63,14 @@ module DriveTime
       @logger.log_as_header "Saving Models"
       @store.each do |key, models|
         models.each do |key, model|
-          #@logger.debug "Saving Model: #{key} #{model.inspect}"
+          @logger.debug "Saving Model: #{key} #{model.inspect}"
           begin
             model.save!
           rescue Exception => error
-              binding.pry
               @logger.warn "Failed To Save Model: #{key}"
               @logger.warn "Error: #{error}"
               @logger.warn "#{model.inspect}"
+              raise error
             end
         end
       end
