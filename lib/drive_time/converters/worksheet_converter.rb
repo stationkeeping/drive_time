@@ -6,7 +6,7 @@ module DriveTime
 
     class NoClassWithTitleError < StandardError; end
     class NoFieldNameError < StandardError; end
-
+    class NoMethodError < StandardError; end
     class NoKeyError < StandardError; end
     class PolymorphicAssociationError < StandardError; end
 
@@ -57,7 +57,8 @@ module DriveTime
       model_key = build_id_for_model mapping
       Logger.log_as_sub_header "Model Key: #{model_key}"
       # Build hash ready to pass into model
-      model_fields = row_fields_to_model_fields mapping, model_key
+      model_fields = row_fields_to_model_fields(mapping, model_key)
+      method_calls = row_fields_to_method_calls(mapping, model_key)
 
       # Set the model key as an attribute on the model
       if mapping[:key_to]
@@ -65,8 +66,23 @@ module DriveTime
       end
 
       Logger.debug "Creating Model of class '#{clazz.name.to_s}' with Model Fields #{model_fields.to_s}"
+
       # Create new model
       model = clazz.new(model_fields, without_protection: true)
+
+      # Invoke any method calls
+      method_calls.each do |method_call|
+        call_step = model
+        methods = method_call["methods"]
+        methods.each_with_index do |method, index|
+          if index == method_call.length - 1
+            call_step.send(method, method_call["value"])
+          else
+            call_step = call_step.send(method)
+          end
+        end
+      end
+
       # Add its associations
       add_associations(model, mapping)
       # Store the model using its ID
@@ -85,39 +101,46 @@ module DriveTime
       end
     end
 
+    def row_fields_to_method_calls(mapping, model_key)
+      method_calls = []
+      # Run through the mapping, pulling values from row_map as required
+      if mapping[:calls]
+        mapping[:calls].each do |call_mapping|
+          field_name = call_mapping[:name]
+          methods = call_mapping[:methods]
+
+          unless methods
+            raise NoMethodError "Missing Method: Name for call field: #{field_name} in mapping: #{mapping}"
+          end
+
+          field_value = parse_field_value(@row_map[field_name])
+
+          # handle multi-values
+          if call_mapping[:builder] == "multi"
+            field_value = MultiBuilder.new.build(field_value)
+          end
+          method_calls << {"methods" => methods, "value" => field_value}
+        end
+      end
+      return method_calls
+    end
+
     # Run through the mapping's fields and convert them
     def row_fields_to_model_fields(mapping, model_key)
       model_fields = HashWithIndifferentAccess.new
+
       # Run through the mapping, pulling values from row_map as required
       if mapping[:fields]
         mapping[:fields].each do |field_mapping|
           field_name = field_mapping[:name]
           mapped_to_field_name = field_mapping[:map_to]
+
           unless field_name
             raise NoFieldNameError "Missing Field: Name for field: #{value} in mapping: #{mapping}"
           end
 
-          field_value = @row_map[field_name]
-          # Check for token pattern: {{some_value}}
-          match = /\{\{(.*?)\}\}/.match(field_value)
-          if match
-            field_value = @field_expander.expand(match[1], model_key)
-          end
-
-          # Check for Boolean values
-          if field_value
-            downcased = field_value.downcase
-            if downcased == 'y' || downcased == 'yes' || downcased == 'true'
-              field_value = true
-            elsif downcased == 'n' || downcased == 'no' || downcased == 'false'
-              field_value = false
-            end
-          end
-
-          # Make sure any empty cells give us nil (rather than an empty string)
-          field_value = nil if field_value.blank?
+          field_value = parse_field_value(@row_map[field_name])
           model_fields[mapped_to_field_name || field_name] = field_value
-
         end
       end
       return model_fields
@@ -210,18 +233,12 @@ module DriveTime
     def associated_models_from_builder(association_mapping, class_name)
       associated_models = []
       if association_mapping[:builder] == 'multi' # It's a multi value, find a matching cell and split its value by comma
-        puts "MULTI class *********#{class_name}"
-        puts "Row Map #{@row_map}"
-        puts "Target #{class_name.underscore.pluralize}"
         # Use only the classname for the fieldname, discarding namespace
         field_name = class_name.split("::").last.underscore.pluralize
-        puts "FIELD NAME *********#{field_name}"
         cell_value = @row_map[field_name]
         raise MissingAssociationError "No field #{class_name.underscore.pluralize} to satisfy multi association" if cell_value.blank? && association_mapping[:optional] != true
-        components = cell_value.present? ? cell_value.split(',') : []
-        puts "Cell Value #{cell_value}"
+        components = MultiBuilder.new.build(cell_value)
         components.each do |component|
-          puts "Component #{component.to_s}"
           associated_models << model_for_id(component, namespaced_class_name(class_name))
         end
       elsif association_mapping[:builder] == 'use_fields' # Use column names as values if cell contains 'yes' or 'y'
@@ -232,7 +249,6 @@ module DriveTime
           end
         end
       end
-      puts "MULTI *********#{associated_models.inspect}"
       return associated_models
     end
 
@@ -261,9 +277,40 @@ module DriveTime
       end
     end
 
-    def namespaced_class_name class_name
+    def namespaced_class_name(class_name)
       class_name = "#{@namespace}::#{class_name}" unless @namespace.blank?
       class_name.constantize
+    end
+
+    def parse_field_value(field_value)
+      if field_value
+        field_value = check_for_token(field_value)
+        field_value = check_for_boolean(field_value)
+      end
+      # Make sure any empty cells give us nil (rather than an empty string)
+      field_value = nil if field_value.blank?
+      field_value
+    end
+
+    def check_for_token(field_value)
+      # Check for token pattern: {{some_value}}
+      match = /\{\{(.*?)\}\}/.match(field_value)
+      if match
+        @field_expander.expand(match[1], model_key)
+      else
+        field_value
+      end
+    end
+
+    def check_for_boolean(field_value)
+      downcased = field_value.downcase
+      if downcased == 'y' || downcased == 'yes' || downcased == 'true'
+        true
+      elsif downcased == 'n' || downcased == 'no' || downcased == 'false'
+        false
+      else
+        field_value
+      end
     end
   end
 end
