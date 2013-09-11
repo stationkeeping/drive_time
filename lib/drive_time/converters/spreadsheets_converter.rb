@@ -11,9 +11,9 @@ module DriveTime
 
     # Load mappings YML file
     def load(mappings_path)
-      @mappings = ActiveSupport::HashWithIndifferentAccess.new(YAML::load File.open(mappings_path))
-      @namespace = @mappings[:namespace]
-      spreadsheets = download_spreadsheets
+      mappings = ActiveSupport::HashWithIndifferentAccess.new(YAML::load File.open(mappings_path))
+      @namespace = mappings[:namespace]
+      spreadsheets = download_spreadsheets(mappings)
 
       worksheets = []
       spreadsheets.each do |spreadsheet|
@@ -21,7 +21,7 @@ module DriveTime
         build_class_map spreadsheet
         # Download and combine worksheets into single Array
         downloaded_worksheets = download_worksheets(spreadsheet)
-        worksheets.concat downloaded_worksheets
+        worksheets.concat(downloaded_worksheets)
       end
 
       worksheets = order_worksheets_by_dependencies( worksheets )
@@ -31,21 +31,22 @@ module DriveTime
         WorksheetConverter.new(@model_store, @class_name_map, @loader, @namespace).convert(worksheet)
       end
 
+      # Now all the models exist, save them without problems from missing associations triggering
+      # validation failiures
       @model_store.save_all
       Logger.log_as_header "Conversion Complete. Woot Woot."
     end
 
     protected
 
-    def download_spreadsheets
-      spreadsheets = []
+    def download_spreadsheets(mappings)
       # First download the spreadsheets
-      @mappings[:spreadsheets].each do |spreadsheet_mapping|
+     spreadsheets =  mappings[:spreadsheets].map do |spreadsheet_mapping|
         spreadsheet =  @loader.load_spreadsheet(spreadsheet_mapping[:title])
-        raise "No spreadsheet with a title: #{spreadsheet_mapping['title']} available" if spreadsheet.nil?
+        raise MissingSpreadsheetError "No spreadsheet with a title: #{spreadsheet_mapping['title']} available" if spreadsheet.nil?
         # Store mapping on the spreadsheet
         spreadsheet.mapping = spreadsheet_mapping
-        spreadsheets << spreadsheet
+        spreadsheet
       end
       return spreadsheets
     end
@@ -57,7 +58,7 @@ module DriveTime
         worksheet_mappings.each do |worksheet_mapping|
           title = worksheet_mapping[:title]
           worksheet = @loader.load_worksheet_from_spreadsheet spreadsheet, title
-          raise "No worksheet with a title: #{worksheet_mapping['title']} available" if worksheet.nil?
+          raise MissingWorksheetError "No worksheet with a title: #{worksheet_mapping['title']} available" if worksheet.nil?
           worksheet.mapping = worksheet_mapping
           worksheets << worksheet
         end
@@ -104,7 +105,6 @@ module DriveTime
     def worksheet_for_association(name, worksheets)
       # And find the worksheet that satisfies it
       worksheets.each do |worksheet|
-        class_name = DriveTime.class_name_from_title(worksheet.title)
         # If the name matches we have a dependent relationship
         if name == DriveTime.underscore_from_text(worksheet.title)
           return worksheet

@@ -22,30 +22,28 @@ module DriveTime
       Logger.log_as_header "Converting worksheet: #{worksheet.title}"
       # Use the spreadsheet name unless 'map_to_class' is set
       class_name = DriveTime.class_name_from_title(worksheet.title)
-      class_name = @class_name_map.resolve_mapped_from_original class_name
+      class_name = @class_name_map.resolve_mapped_from_original(class_name)
       Logger.debug "Converting Worksheet #{worksheet.title} to class #{class_name}"
       # Check class exists - better we know immediately
       begin
-        clazz = namespaced_class_name class_name
+        clazz = namespaced_class_name(class_name)
       rescue StandardError => error
         raise NoClassWithTitleError, "Worksheet named #{worksheet.title} doesn't exists as class #{class_name}"
       end
       rows = worksheet.rows.dup
       # Remove the first row and use it for field-names
-      fields = rows.shift.map{ |row| row }
+      field_names = rows.shift.map{ |row| row }
       # Reject rows of only empty strings (empty cells).
       rows.reject! {|row| row.all?(&:empty?)}
-      rows.each do |row|
-        generate_model_from_row clazz, worksheet.mapping, fields, row
-      end
+      rows.each { |row| generate_model_from_row(clazz, worksheet.mapping, field_names, row) }
     end
 
     protected
 
-    def generate_model_from_row(clazz, mapping, fields, row)
+    def generate_model_from_row(clazz, mapping, field_names, row)
       Logger.log_as_header "Converting row to class: #{clazz.name}"
       # Create a hash of field-names and row cell values
-      build_row_map(fields, row)
+      build_row_map(field_names, row)
 
       # If a row has been marked as not complete, ignore it
       if @row_map[:complete] == 'No'
@@ -53,7 +51,7 @@ module DriveTime
         return
       end
 
-      model_key = build_id_for_model mapping
+      model_key = build_id_for_model(mapping)
       Logger.log_as_sub_header "Model Key: #{model_key}"
       # Build hash ready to pass into model
       model_fields = row_fields_to_model_fields(mapping, model_key)
@@ -74,18 +72,20 @@ module DriveTime
       # Add its associations
       add_associations(model, mapping)
       # Store the model using its ID
-      @model_store.add_model model, model_key, clazz
+      @model_store.add_model(model, model_key, clazz)
     end
 
     # Convert worksheet row into hash
-    def build_row_map(fields, row)
+    def build_row_map(field_names, row)
       @row_map = HashWithIndifferentAccess.new
       Logger.log_as_sub_header "Mapping fields to cells"
       row.dup.each_with_index do |cell, index|
         # Sanitise
-        field_name = DriveTime.underscore_from_text fields[index]
-        @row_map[field_name] = row[index]
+        field_name = DriveTime.underscore_from_text(field_names[index])
         Logger.debug "- #{field_name} -> #{row[index]}"
+        field_value = row[index]
+        field_value.strip! if field_value.present?
+        @row_map[field_name] = field_value
       end
     end
 
@@ -205,7 +205,7 @@ module DriveTime
       associated_models.each do |associated_model|
         Logger.debug " - Associated Model: #{associated_model}"
         unless association_mapping[:inverse] == true
-          association_name = association_class_name.split('::').last.underscore
+          association_name = association_class_name.demodulize.underscore
           if association_mapping[:singular] == true
             Logger.debug "   - Adding association #{associated_model} to #{model}::#{association_name}"
             # Set the association
@@ -218,7 +218,7 @@ module DriveTime
             model_associations << associated_model
           end
         else # The relationship is actually inverted, so save the model as an association on the associated_model
-          model_name = model.class.name.split('::').last.underscore
+          model_name = model.class.name.demodulize.underscore
           if association_mapping[:singular] == true
             Logger.debug "   - Adding association #{model} to #{associated_model}::#{association_name}"
             associated_model.send model_name, model
@@ -236,7 +236,7 @@ module DriveTime
       associated_models = []
       if association_mapping[:builder] == 'multi' # It's a multi value, find a matching cell and split its value by comma
         # Use only the classname for the fieldname, discarding namespace
-        field_name = class_name.split("::").last.underscore.pluralize
+        field_name = class_name.demodulize.underscore.pluralize
         cell_value = @row_map[field_name]
         raise MissingAssociationError "No field #{class_name.underscore.pluralize} to satisfy multi association" if cell_value.blank? && association_mapping[:optional] != true
         components = MultiBuilder.new.build(cell_value)
@@ -263,19 +263,21 @@ module DriveTime
       raise NoKeyError, 'All mappings must declare a key' unless mapping.has_key? :key
       key_node = mapping[:key]
       if key_node.is_a? Hash
-        if key_node[:builder] == 'join'
-          key = JoinBuilder.new.build key_node[:from_fields], @row_map
-        elsif key_node[:builder] == 'name'
-          key = NameBuilder.new.build key_node[:from_fields], @row_map
-        else
-          raise "No builder for key on worksheet #{mapping[:title]}"
-        end
+        id_from_builder(key_node)
       else # If it's a string, it refers to a spreadsheet column
-        key_attribute = key_node
-        # Is there a column
-        key = @row_map[key_attribute]
-        raise NoFieldNameError, "No column #{key_attribute} on worksheet #{mapping[:title]}" if !key
-        DriveTime.underscore_from_text key
+        key = @row_map[key_node]
+        raise NoFieldNameError, "No column #{key_node} on worksheet #{mapping[:title]}" if !key
+        DriveTime.underscore_from_text(key)
+      end
+    end
+
+    def id_from_builder(key_node)
+      if key_node[:builder] == 'join'
+        JoinBuilder.new.build key_node[:from_fields], @row_map
+      elsif key_node[:builder] == 'name'
+        NameBuilder.new.build key_node[:from_fields], @row_map
+      else
+        raise "No builder for key on worksheet"
       end
     end
 
@@ -306,9 +308,9 @@ module DriveTime
 
     def check_for_boolean(field_value)
       downcased = field_value.downcase
-      if downcased == 'y' || downcased == 'yes' || downcased == 'true'
+      if %w[y yes true].include? downcased
         true
-      elsif downcased == 'n' || downcased == 'no' || downcased == 'false'
+      elsif %w[n no false].include? downcased
         false
       else
         field_value

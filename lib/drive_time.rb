@@ -25,6 +25,8 @@ module DriveTime
   mattr_accessor :log_level
 
   class MissingAssociationError < StandardError; end
+  class MissingSpreadsheetError < StandardError; end
+  class MissingWorksheetError < StandardError; end
 
   include ActiveSupport::Inflector
   include Log4r
