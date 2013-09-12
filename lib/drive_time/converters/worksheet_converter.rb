@@ -13,9 +13,8 @@ module DriveTime
     def initialize(model_store, class_name_map, loader, namespace)
       @class_name_map = class_name_map
       @model_store = model_store
-      @loader = loader
       @namespace = namespace
-      @field_expander = FieldExpander.new(@loader)
+      @field_expander = FieldExpander.new(loader)
     end
 
     def convert(worksheet)
