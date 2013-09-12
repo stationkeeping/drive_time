@@ -34,7 +34,7 @@ module DriveTime
       end
     end
 
-    describe 'when models are retieved' do
+    describe 'when models are retrieved' do
 
       it 'should raise a NoModelsOfClassInStoreError if no model is stored of the given type' do
         @model_store.add_model(@model_a, 'model_a', ModelA)

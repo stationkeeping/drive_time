@@ -1,7 +1,7 @@
 module DriveTime
 
   # Load a Spreadsheet from Google Drive
-  class Loader
+  class GoogleDriveLoader
 
     class SpreadsheetNotFoundError < StandardError; end
     class WorksheetNotFoundError < StandardError; end

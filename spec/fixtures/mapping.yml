@@ -5,37 +5,38 @@ spreadsheets:
       - title: Group
         map_to_class: Act
         key: name
-        fields:
+        attributes:
           - name: name
           - name: formed
+          - name: data_1
+          - name: data_2
         associations:
           - name: member
             builder: multi
 
       - title: Album
         key: name
-        fields:
+        attributes:
           - name: year
         associations:
           - name: label
-            builder: use_fields
-            field_names: [label_1, label_2, label_3]
+            builder: use_attributes
+            attribute_names: [label_1, label_2, label_3]
             singular: true
           - name: group
             singular: true
 
       - title: Label
         key: name
-        fields:
+        attributes:
           - name: genre
           - name: website
 
       - title: Member
         key: name
-        fields:
+        attributes:
           - name: name
           - name: real_name
-          #  from_fields: [forename, middle_names, surname]
           - name: year_of_birth
           - name: year_of_death
 
@@ -45,8 +46,8 @@ spreadsheets:
       - title: Track
         key:
           builder: join
-          from_fields: [name, remix]
-        fields:
+          from_attributes: [name, remix]
+        attributes:
           - name: name
           - name: remix
           - name: duration

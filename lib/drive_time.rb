@@ -9,15 +9,18 @@ require 'active_support/core_ext/hash'
 require 'active_support/core_ext/module'
 
 require 'drive_time/model_store'
-require 'drive_time/field_expander'
+require 'drive_time/expanders/field_expander'
+require 'drive_time/expanders/google_file_expander'
+require 'drive_time/expanders/google_spreadsheet_expander'
 require 'drive_time/bi_directional_hash'
-require 'drive_time/loader'
+require 'drive_time/loaders/google_drive_loader'
 require 'drive_time/class_name_map'
 require 'drive_time/builders/join_builder'
 require 'drive_time/builders/name_builder'
 require 'drive_time/builders/multi_builder'
 require 'drive_time/converters/spreadsheets_converter'
-require 'drive_time/converters/worksheet_converter'
+require 'drive_time/converters/source_converter'
+require 'drive_time/source_adapters/worksheet_source_adapter'
 require 'drive_time/logging'
 
 module DriveTime
@@ -64,6 +67,22 @@ module DriveTime
     value.
       strip.
       downcase == 'yes' || value.downcase == 'y'
+  end
+
+  def self.check_string_for_boolean(value)
+    downcased = value.downcase
+    if %w[y yes true].include? downcased
+      true
+    elsif %w[n no false].include? downcased
+      false
+    else
+      value
+    end
+  end
+
+  def self.namespaced_class_name(class_name, namespace = nil)
+    class_name = "#{namespace}::#{class_name}" unless namespace.blank?
+    class_name.constantize
   end
 
   def self.log_level=(log_level)

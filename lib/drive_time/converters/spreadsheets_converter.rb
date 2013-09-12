@@ -4,7 +4,10 @@ module DriveTime
 
     def initialize()
       @dependency_graph = DeepEnd::Graph.new
-      @loader = DriveTime::Loader.new
+      @expander = FieldExpander.new
+      @loader = GoogleDriveLoader.new
+      @expander.register_expander(GoogleFileExpander.new(@loader))
+      @expander.register_expander(GoogleSpreadsheetExpander.new(@loader))
       @model_store = ModelStore.new(DriveTime::log_level)
       @class_name_map = ClassNameMap.new
     end
@@ -28,7 +31,8 @@ module DriveTime
 
       # Convert the worksheets
       worksheets.each do |worksheet|
-        WorksheetConverter.new(@model_store, @class_name_map, @loader, @namespace).convert(worksheet)
+        worksheet_source = WorksheetSourceAdapter.new(worksheet)
+        SourceConverter.new(@model_store, @class_name_map, @expander, @namespace).convert(worksheet_source)
       end
 
       # Now all the models exist, save them without problems from missing associations triggering
@@ -79,9 +83,7 @@ module DriveTime
     end
 
     def find_associations(dependent_worksheet, worksheets)
-
       dependent_associations_mapping = dependent_worksheet.mapping[:associations]
-
       associations = []
       if dependent_associations_mapping
         # Run through each association
