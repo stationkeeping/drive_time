@@ -11,6 +11,7 @@ Gem::Specification.new do |gem|
   gem.description   = %q{Convert Google Spreadsheets to Rails Models}
   gem.summary       = %q{Map Worksheets to Models and their columns to model attributes. Seed your database directly from Google Drive.}
   gem.homepage      = "https://github.com/stationkeeping/drive_time"
+  gem.license       = "MIT"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
