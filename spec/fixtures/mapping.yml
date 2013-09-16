@@ -11,7 +11,7 @@ spreadsheets:
           - name: data_1
           - name: data_2
         associations:
-          - name: member
+          - name: Member
             builder: multi
 
       - title: Album
@@ -19,24 +19,25 @@ spreadsheets:
         attributes:
           - name: year
         associations:
-          - name: label
+          - name: Label
             builder: use_attributes
             attribute_names: [label_1, label_2, label_3]
             singular: true
-          - name: group
+          - name: Group
             singular: true
 
       - title: Label
         key: name
         attributes:
-          - name: genre
-          - name: website
+          - name: Genre
+          - name: Website
 
       - title: Member
         key: name
         attributes:
-          - name: name
-          - name: real_name
+          - name: forename
+          - name: middle_names
+          - name: surname
           - name: year_of_birth
           - name: year_of_death
 
@@ -52,5 +53,5 @@ spreadsheets:
           - name: remix
           - name: duration
         associations:
-          - name: album
+          - name: Album
             inverse: true

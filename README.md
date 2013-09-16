@@ -50,7 +50,7 @@ An example of usage:
 include DriveTime
 
 mappings_path = File.join(File.dirname(__FILE__),'mappings.yml')
-SpreadsheetsConverter.new.load mappings_path
+GoogleDriveInitialiser.new.load mappings_path
 ```
 
 The `mappings.yml` is crucial. It specifies the name of your spreadsheet and how you want to map your worksheets to your models.

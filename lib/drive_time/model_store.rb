@@ -1,4 +1,4 @@
-require 'log4r'
+require "log4r"
 
 module DriveTime
 
@@ -22,7 +22,7 @@ module DriveTime
       outputter = Log4r::Outputter.stdout
       outputter.formatter = formatter
 
-      @logger = Log4r::Logger.new ' Model Store '
+      @logger = Log4r::Logger.new " Model Store "
       @logger.level = log_level
       @logger.outputters = outputter
     end
@@ -67,11 +67,11 @@ module DriveTime
           begin
             model.save!
           rescue Exception => error
-              @logger.warn "Failed To Save Model: #{key}"
-              @logger.warn "Error: #{error}"
-              @logger.warn "#{model.inspect}"
-              raise error
-            end
+            @logger.warn "Failed To Save Model: #{key}"
+            @logger.warn "Error: #{error}"
+            @logger.warn "#{model.inspect}"
+            raise error
+          end
         end
       end
     end
