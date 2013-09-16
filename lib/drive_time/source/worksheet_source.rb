@@ -36,7 +36,7 @@ module DriveTime
         model_definition[field_name] = field_value
       end
       return ModelDefinition.new(model_definition, mapping)
-
     end
+
   end
 end
