@@ -21,49 +21,46 @@ module DriveTime
       it "it should raise a TokenExpansionError" do
         expect{ @field_expander.expand("expand_invalid", @valid_filename_1) }.to raise_error(TokenExpansionError)
       end
-
     end
 
     context "with a registered expander"  do
 
       it "it should raise a TokenExpansionError for an unregistered key" do
-        expander = double("Expander")
-        expander.stub(:key).and_return(@valid_key_1)
-        @field_expander.register_expander(expander)
+        provider = double("Provider")
+        provider.stub(:key).and_return(@valid_key_1)
+        @field_expander.register_provider(provider)
         expect{ @field_expander.expand("expand_invalid", @valid_filename_1) }.to raise_error(TokenExpansionError)
       end
 
       it "it should expand the token for a valid key" do
-        expander = double("Expander")
-        expander.stub(:key).and_return(@valid_key_1)
-        @field_expander.register_expander(expander)
-        expander.should receive(:expand).with(@valid_filename_1).and_return(@valid_response_1)
+        provider = double("Provider")
+        provider.stub(:key).and_return(@valid_key_1)
+        @field_expander.register_provider(provider)
+        provider.should_receive(:expand).with(@valid_filename_1).and_return(@valid_response_1)
         @field_expander.expand("expand_#{@valid_key_1}", @valid_filename_1).should == @valid_response_1
       end
 
       context "with a filename included in the token inside [] brackets" do
 
         it "it should use the filename" do
-          expander = double("Expander")
-          expander.stub(:key).and_return(@valid_key_1)
-          @field_expander.register_expander(expander)
-          expander.should receive(:expand).with(@valid_token_filename).and_return(@valid_response_1)
+          provider = double("Provider")
+          provider.stub(:key).and_return(@valid_key_1)
+          @field_expander.register_provider(provider)
+          provider.should_receive(:expand).with(@valid_token_filename).and_return(@valid_response_1)
           @field_expander.expand("expand_#{@valid_key_1}[#{@valid_token_filename}]", @valid_filename_1).should == @valid_response_1
         end
-
       end
-
     end
 
     context "with multiple registered expanders"  do
 
       it "it should expand the token for a valid key" do
-        expander_1 = double("Expander")
+        expander_1 = double("Provider")
         expander_1.stub(:key).and_return(@valid_key_1)
-        expander_2 = double("Expander")
+        expander_2 = double("Provider")
         expander_2.stub(:key).and_return(@valid_key_2)
-        @field_expander.register_expander(expander_1)
-        @field_expander.register_expander(expander_2)
+        @field_expander.register_provider(expander_1)
+        @field_expander.register_provider(expander_2)
         expander_1.should receive(:expand).with(@valid_filename_1).and_return(@valid_response_1)
         expander_2.should receive(:expand).with(@valid_filename_2).and_return(@valid_response_2)
         @field_expander.expand("expand_#{@valid_key_1}", @valid_filename_1).should == @valid_response_1
@@ -71,6 +68,5 @@ module DriveTime
       end
 
     end
-
   end
 end

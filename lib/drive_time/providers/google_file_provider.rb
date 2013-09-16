@@ -1,12 +1,12 @@
 module DriveTime
 
-  class GoogleFileExpander
+  class GoogleFileProvider
 
     attr_reader :key
 
     def initialize(loader)
       @loader = loader
-      @key = 'file'
+      @key = "file"
     end
 
     def expand(filename)

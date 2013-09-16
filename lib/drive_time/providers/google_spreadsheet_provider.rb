@@ -1,15 +1,15 @@
-require 'json'
+require "json"
 
 module DriveTime
 
   # Currently assumes a Spreadsheet with a single Worksheet
-  class GoogleSpreadsheetExpander
+  class GoogleSpreadsheetProvider
 
     attr_reader :key
 
     def initialize(loader)
       @loader = loader
-      @key = 'spreadsheet'
+      @key = "spreadsheet"
     end
 
     def expand(filename)
