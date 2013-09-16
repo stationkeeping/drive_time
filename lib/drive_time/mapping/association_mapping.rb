@@ -12,11 +12,12 @@ module DriveTime
     end
 
     def clazz
-      mapping = @class_map.mapping_for_class(DriveTime.class_name_from_title(name))
+      class_name = DriveTime.class_name_from_title(name)
+      mapping = @class_map.mapping_for_class(class_name)
       if mapping
         mapping.constantize
       else
-        name.constantize
+        class_name.constantize
       end
     end
 
