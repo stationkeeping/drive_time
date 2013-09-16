@@ -2,17 +2,17 @@ require 'spec_helper'
 
 module DriveTime
 
-  describe SourceConverter do
+  describe Mapper do
 
     before(:each) do
-      @source_converter = SourceConverter.new(nil, nil, nil, nil)
+      @mapper = Mapper.new(nil, nil, nil, nil)
     end
 
     # context 'build_id_for_model' do
 
     #   it 'should build correct id for model using basic key' do
 
-    #     class SourceConverter
+    #     class Mapper
     #       public :build_id_for_model
     #     end
 
@@ -23,7 +23,7 @@ module DriveTime
 
     #   it 'should build correct id for model using join builder' do
 
-    #     class SourceConverter
+    #     class Mapper
     #       public :build_id_for_model
     #     end
 
@@ -35,7 +35,7 @@ module DriveTime
 
     #   it 'should build correct id for model using name builder' do
 
-    #     class SourceConverter
+    #     class Mapper
     #       public :build_id_for_model
     #     end
 
@@ -47,14 +47,14 @@ module DriveTime
 
     #   it 'should raise a NoFieldNameError if no field exists with key name' do
 
-    #     class SourceConverter
+    #     class Mapper
     #       public :build_id_for_model
     #     end
 
     #     mapping = {:key => 'nonsense'}
     #     @source_converter.row_map = {'name' => 'John'}
 
-    #     expect { @source_converter.build_id_for_model(mapping) }.to raise_error SourceConverter::NoFieldNameError
+    #     expect { @source_converter.build_id_for_model(mapping) }.to raise_error Mapper::NoFieldNameError
     #   end
 
     # end
