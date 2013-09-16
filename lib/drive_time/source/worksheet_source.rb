@@ -1,6 +1,6 @@
 module DriveTime
 
-  class WorksheetSourceAdapter
+  class WorksheetSource
 
     def initialize(worksheet)
       @worksheet = worksheet
@@ -35,9 +35,8 @@ module DriveTime
         field_value.strip! if field_value.present?
         model_definition[field_name] = field_value
       end
-      return model_definition
+      return ModelDefinition.new(model_definition, mapping)
 
     end
-
   end
 end
