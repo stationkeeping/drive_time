@@ -6,7 +6,7 @@ module DriveTime
   VALID_SPREADSHEET_2_TITLE = 'Fixture 2'
   INVALID_SPREADSHEET_TITLE = 'Invalid Title xccdtyyehdyd56ejr6'
 
-  describe Loader do
+  describe GoogleDriveLoader do
 
     def last_access_time_for_cached_file(title)
       cached_directory = ENV['CACHED_DIR']
@@ -32,7 +32,6 @@ module DriveTime
     end
 
     context 'When not using cache' do
-
       context 'when accessing a spreadsheet' do
 
         it "should raise a SpreadsheetNotFoundError if a spreadsheet doesn't exist" do
@@ -42,7 +41,6 @@ module DriveTime
         it "should download a Spreadsheet sucessfully" do
           @loader.load_spreadsheet(VALID_SPREADSHEET_1_TITLE, false).title.should == VALID_SPREADSHEET_1_TITLE
         end
-
       end
 
       context 'when accessing a worksheet from with a loaded spreadsheet' do
@@ -58,7 +56,6 @@ module DriveTime
         it "should download a Worksheet sucessfully" do
           @loader.load_worksheet_from_spreadsheet(@spreadsheet, 'Label', false).title.should == 'Label'
         end
-
       end
     end
 
@@ -95,7 +92,6 @@ module DriveTime
           cached_file_exists('Album').should be_true
           cached_file_exists('Group').should be_true
         end
-
       end
 
       context 'when accessing a worksheet from with a loaded spreadsheet' do
@@ -105,7 +101,6 @@ module DriveTime
         end
 
       end
-
     end
   end
 end

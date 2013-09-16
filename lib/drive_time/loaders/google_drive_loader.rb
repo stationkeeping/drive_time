@@ -25,9 +25,8 @@ module DriveTime
       spreadsheet = nil
       # Try and pull the file from the cache
       if cached_directory && use_cache
-
         if File.exist? spreadsheet_file_path
-          File.open(spreadsheet_file_path, 'r') do |file|
+          File.open(spreadsheet_file_path, "r") do |file|
             Logger.info "Pulling spreadsheet '#{title}' from cache"
             spreadsheet = YAML::load(file)
           end
@@ -38,13 +37,12 @@ module DriveTime
       unless spreadsheet
         Logger.info "Loading spreadsheet '#{title}' from Drive"
         spreadsheet = @session.spreadsheet_by_title(title)
-
-        raise SpreadsheetNotFoundError, "Spreadsheet #{title} not found" if spreadsheet.nil?
+        raise SpreadsheetNotFoundError, "Spreadsheet '#{title}' not found" if spreadsheet.nil?
         # Save the file to cache directory
         if cached_directory && use_cache
           # Save the spreadsheet
           Logger.info "Saving spreadsheet '#{title}' to cache"
-          File.open(spreadsheet_file_path, 'w') do |file|
+          File.open(spreadsheet_file_path, "w") do |file|
             file.puts YAML::dump(spreadsheet)
           end
 
@@ -53,8 +51,8 @@ module DriveTime
             Logger.info "Saving worksheet '#{worksheet.title}' to cache"
             # Force worksheet to down of cells data
             #worksheet.reload
-            worksheet_file_path = File.join(cached_directory, worksheet.title) + '.yml'
-            File.open(worksheet_file_path, 'w') do |file|
+            worksheet_file_path = "#{File.join(cached_directory, worksheet.title)}.yml"
+            File.open(worksheet_file_path, "w") do |file|
               file.puts YAML::dump(worksheet)
             end
           end
@@ -65,35 +63,28 @@ module DriveTime
     end
 
     def load_worksheet_from_spreadsheet(spreadsheet, title, use_cache=true)
-      cached_directory = ENV['CACHED_DIR']
+      cached_directory = ENV["CACHED_DIR"]
       worksheet_name = "#{title}.yml"
-
       worksheet = nil
-
       # Get the worksheet from the cache
       if cached_directory && use_cache
         worksheet_file_path = File.join(cached_directory, title)
         if File.exist? worksheet_file_path
-          File.open(worksheet_file_path, 'r') do |file|
+          File.open(worksheet_file_path, "r") do |file|
             Logger.info "Pulling worksheet '#{title}' from cache"
             worksheet = YAML::load(file)
           end
         end
       end
-
-      # If we don't yet have a worksheet, pull it from Google Drive via the Spreadsheet
-      unless worksheet
-        worksheet = spreadsheet.worksheet_by_title title
-        raise WorksheetNotFoundError, "Worksheet '#{title}'' not found in spreadsheet '#{spreadsheet.title}'" if worksheet.nil?
-      end
-
+      worksheet ||= spreadsheet.worksheet_by_title title
+      raise WorksheetNotFoundError, "Worksheet '#{title}' not found in spreadsheet '#{spreadsheet.title}'" unless worksheet.present?
       return worksheet
     end
 
     protected
 
     def begin_session
-      @session = GoogleDrive.login( ENV['GOOGLE_USERNAME'], ENV['GOOGLE_PASSWORD'])
+      @session = GoogleDrive.login( ENV["GOOGLE_USERNAME"], ENV["GOOGLE_PASSWORD"])
     end
 
   end
