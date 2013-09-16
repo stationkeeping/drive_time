@@ -12,13 +12,7 @@ module DriveTime
     end
 
     def clazz
-      class_name = DriveTime.class_name_from_title(name)
-      mapping = @class_map.mapping_for_class(class_name)
-      if mapping
-        mapping.constantize
-      else
-        class_name.constantize
-      end
+      @clazz ||= build_class
     end
 
     # Handle possible polymorphic association
@@ -65,6 +59,13 @@ module DriveTime
 
     def attribute_names
       @mapping[:attribute_names]
+    end
+
+    protected
+
+    def build_class
+      class_name = @class_map.mapping_for_class(class_name) || DriveTime.class_name_from_title(name)
+      @clazz = class_name.constantize
     end
 
   end
