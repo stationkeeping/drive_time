@@ -5,6 +5,8 @@ module DriveTime
     def initialize(mapping, class_map)
       @mapping = mapping
       @class_map = class_map
+      # Set default if not included in mapping
+      @mapping[:worksheets] ||= []
     end
 
     def title
@@ -19,12 +21,8 @@ module DriveTime
 
     def build_worksheets
       validator = WorksheetMappingValidator.new
-      if @mapping[:worksheets]
-        @worksheets = @mapping[:worksheets].map do |worksheet|
-          WorksheetMapping.new(worksheet, @class_map, validator).validate
-        end
-      else
-        []
+      @worksheets = @mapping[:worksheets].map do |worksheet|
+        WorksheetMapping.new(worksheet, @class_map, validator).validate
       end
     end
 

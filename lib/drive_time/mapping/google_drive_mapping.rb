@@ -5,6 +5,7 @@ module DriveTime
     def initialize(mapping)
       @mapping = mapping
       @class_map = ClassMap.new
+      @mapping[:spreadsheets] ||= []
     end
 
     def title
@@ -18,11 +19,7 @@ module DriveTime
     protected
 
     def build_spreadsheets
-      if @mapping[:spreadsheets]
-         @mapping[:spreadsheets].map{|spreadsheet| SpreadsheetMapping.new(spreadsheet, @class_map)}
-      else
-        []
-      end
+      @mapping[:spreadsheets].map{|spreadsheet| SpreadsheetMapping.new(spreadsheet, @class_map)}
     end
 
   end

@@ -6,6 +6,10 @@ module DriveTime
       @mapping = mapping
       @class_map = class_map
       @validator = validator
+      # Set empty defaults if not included in mapping
+      @mapping[:associations] ||= []
+      @mapping[:attributes] ||= []
+      @mapping[:calls] ||= []
     end
 
     def validate
@@ -25,7 +29,7 @@ module DriveTime
     end
 
     def attributes
-      @attributes ||= @mapping[:attributes] || []
+      @mapping[:attributes]
     end
 
     def associations
@@ -33,7 +37,7 @@ module DriveTime
     end
 
     def calls
-      @calls ||= @mapping[:calls] || []
+      @mapping[:calls]
     end
 
     def key
@@ -44,18 +48,10 @@ module DriveTime
       @mapping[:key_to]
     end
 
-    def association_names
-
-    end
-
     protected
 
     def build_associations
-      if @mapping[:associations]
-        @mapping[:associations].map{ |association| AssociationMapping.new(association, @class_map) }
-      else
-        []
-      end
+      @mapping[:associations].map{ |association| AssociationMapping.new(association, @class_map) }
     end
 
     def build_class
