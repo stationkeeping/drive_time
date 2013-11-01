@@ -4,8 +4,11 @@ module DriveTime
   class MultiBuilder
 
     def build(value)
-        value = value.gsub("\n", "").strip.split(",") if value.present?
-        value || []
+      if value.blank?
+        []
+      else
+        value = value.gsub("\n", "").strip.split(",")
+      end
     end
 
   end
