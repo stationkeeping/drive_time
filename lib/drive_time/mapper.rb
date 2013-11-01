@@ -121,6 +121,8 @@ module DriveTime
             Logger.debug("   - Adding association '#{associated_model}' to '#{@model}', '#{association_name}'")
             # Set the association
             @model.send("#{association_name}=", associated_model)
+            puts "*********"
+            puts @model.send(association_name).inspect
           else
             if association_mapping.through?
               if association_mapping.through_is_polymorphic?
