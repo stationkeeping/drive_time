@@ -63,13 +63,13 @@ module DriveTime
       @logger.log_as_header "Saving Models"
       @store.each do |key, models|
         models.each do |key, model|
-          @logger.debug "Saving Model: #{key} #{model.inspect}"
+          @logger.debug "Saving Model: #{key} #{ pp model}"
           begin
             model.save!
           rescue Exception => error
             @logger.warn "Failed To Save Model: #{key}"
             @logger.warn "Error: #{error}"
-            @logger.warn "#{model.inspect}"
+            @logger.warn "#{pp model}"
             raise error
           end
         end
