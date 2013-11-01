@@ -119,8 +119,11 @@ module DriveTime
           association_name = association_class.to_s.demodulize.underscore
           if association_mapping.is_singular?
             Logger.debug("   - Adding association '#{associated_model}' to '#{@model}', '#{association_name}'")
+            # This a temporary fix for theme_id being set to nil on assignment and save.
+            # Is this a bug or do I need to rethink saving at the end. It might be that each model
+            # needs to be saved on creation so that it has an id
+            associated_model.save!
             # Set the association
-            #associated_model.save!
             @model.send("#{association_name}=", associated_model)
             if association_name == "theme"
 
