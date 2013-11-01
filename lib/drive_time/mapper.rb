@@ -1,3 +1,5 @@
+require "securerandom"
+
 module DriveTime
 
   class Mapper
@@ -74,13 +76,13 @@ module DriveTime
     def associated_models_from_builder(association_mapping, association_class)
       associated_models = []
       if association_mapping.builder == "multi" # It's a multi value, find a matching cell and split its value by comma
-        # Use only the classname for the attributename
-        field_name = association_class.to_s.underscore.pluralize
+        # Use only the classname for the attributename unless source has been set
+        field_name = association_mapping.source || association_class.to_s.underscore.pluralize
         cell_value = @model_definition.value_for(field_name)
         raise MissingAssociationError, "No field '#{field_name}'' to satisfy multi association." if cell_value.blank? && !association_mapping.is_optional?
         components = MultiBuilder.new.build(cell_value)
         components.each do |component|
-          associated_models << model_for_id(component, association_class)
+            associated_models << model_for_id(component, association_class)
         end
       elsif association_mapping.builder == "use_attributes" # Use column names as values if cell contains 'yes' or 'y'
         association_mapping.attribute_names.each do |attribute_name|
@@ -120,11 +122,22 @@ module DriveTime
             # Set the association
             @model.send("#{association_name}=", associated_model)
           else
-            association_name = association_name.pluralize
-            model_associations = @model.send(association_name)
-            Logger.debug("   - Adding association '#{associated_model}' to '#{@model}', '#{association_name}'")
-            # Push the association
-            model_associations << associated_model
+            if association_mapping.through?
+              if association_mapping.through_is_polymorphic?
+                attributes = association_mapping.through_attributes.merge({"#{association_mapping.through_as}" => @model, "#{associated_model.class.name.underscore}" => associated_model})
+              else
+                attributes = association_mapping.through_attributes.merge({"#{@model.class.name.underscore}" => @model, "#{associated_model.class.name.underscore}" => associated_model})
+              end
+              through_model = association_mapping.through_class.constantize.new(attributes);
+              # Add the model to the store so it is saved
+              @model_store.add_model(through_model, SecureRandom.uuid, through_model.class);
+            else
+              association_name = association_name.pluralize
+              model_associations = @model.send(association_name)
+              Logger.debug("   - Adding association '#{associated_model}' to '#{@model}', '#{association_name}'")
+              # Push the association
+              model_associations << associated_model
+            end
           end
         else # The relationship is actually inverted, so save the model as an association on the associated_model
           model_name = @model.class.name.demodulize.underscore

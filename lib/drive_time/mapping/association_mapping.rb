@@ -11,6 +11,10 @@ module DriveTime
       @mapping[:name]
     end
 
+    def as
+      @mapping[:as]
+    end
+
     def clazz
       @clazz ||= build_class
     end
@@ -29,8 +33,28 @@ module DriveTime
       @mapping[]
     end
 
-    def is_polymorphic?
-      polymorphic.present?
+    def source
+      @mapping[:source]
+    end
+
+    def through?
+      @mapping[:through].present?
+    end
+
+    def through_as
+     @mapping[:through][:as]
+    end
+
+    def through_class
+      @mapping[:through][:class] if through?
+    end
+
+    def through_attributes
+      @mapping[:through][:attributes] if through?
+    end
+
+    def through_is_polymorphic?
+      self.through_as.present?
     end
 
     def is_required?
@@ -47,6 +71,10 @@ module DriveTime
 
     def is_inverse?
       @mapping[:inverse] == true
+    end
+
+    def is_polymorphic?
+      polymorphic.present?
     end
 
     def polymorphic
