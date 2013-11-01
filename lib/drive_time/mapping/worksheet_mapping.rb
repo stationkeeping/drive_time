@@ -55,7 +55,7 @@ module DriveTime
     end
 
     def build_class
-      if mapped_class
+      if mapped_class.present?
         @class_map.map_class(DriveTime.class_name_from_title(title), mapped_class)
       end
       class_name = mapped_class || DriveTime.class_name_from_title(title)
