@@ -120,13 +120,12 @@ module DriveTime
           if association_mapping.is_singular?
             Logger.debug("   - Adding association '#{associated_model}' to '#{@model}', '#{association_name}'")
             # Set the association
-
             #associated_model.save!
             @model.send("#{association_name}=", associated_model)
             if association_name == "theme"
               puts "*********"
               puts @model.send("#{association_name}_assignment").inspect
-              puts @model.send(association_name).inspect
+              puts @model.send(association_name).save!
             end
           else
             if association_mapping.through?
