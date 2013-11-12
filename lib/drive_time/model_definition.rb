@@ -61,7 +61,8 @@ module DriveTime
           raise NoFieldNameError "Missing Field: 'Name' 'for attribute: '#{value}'' in mapping: '#{mapping}'"
         end
 
-        attribute_value = parse_attribute_value(attribute_name)
+        parse_markdown = DriveTime.is_affirmative?(attribute_mapping[:markdown])
+        attribute_value = parse_attribute_value(attribute_name, parse_markdown)
         @attributes[mapped_to_attribute_name || attribute_name] = attribute_value
       end
       return @attributes
@@ -88,7 +89,7 @@ module DriveTime
       return @method_calls
     end
 
-    def parse_attribute_value(attribute_name)
+    def parse_attribute_value(attribute_name, parse_markdown=false)
       attribute_value = value_for(attribute_name)
       if attribute_value
         attribute_value = check_for_token(attribute_value)
@@ -96,6 +97,8 @@ module DriveTime
       end
       # Make sure any empty cells give us nil (rather than an empty string)
       attribute_value = nil if attribute_value.blank?
+      attribute_value = Maruku.new(attribute_value.gsub(/\r/,"\n")) if parse_markdown
+
       attribute_value
     end
 

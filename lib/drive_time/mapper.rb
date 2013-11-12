@@ -125,9 +125,6 @@ module DriveTime
             associated_model.save!
             # Set the association
             @model.send("#{association_name}=", associated_model)
-            if association_name == "theme"
-
-            end
           else
             if association_mapping.through?
               if association_mapping.through_is_polymorphic?
