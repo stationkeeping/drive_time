@@ -1,11 +1,8 @@
-require "maruku"
-
 module DriveTime
 
   class ModelDefinition
 
     attr_accessor :mapping
-
     attr_accessor :expander
 
     def initialize(definition, mapping)
