@@ -96,7 +96,8 @@ module DriveTime
       end
       # Make sure any empty cells give us nil (rather than an empty string)
       attribute_value = nil if attribute_value.blank?
-      attribute_value = Maruku.new(attribute_value.gsub(/\r/,"\n")) if parse_markdown
+
+      attribute_value = Maruku.new(attribute_value.gsub(/\r/,"\n")) if parse_markdown && attribute_value.present?
 
       attribute_value
     end
