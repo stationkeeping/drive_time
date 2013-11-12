@@ -1,6 +1,7 @@
 require "drive_time/version"
 
 require "log4r"
+require "maruku"
 require "google_drive"
 require "deep_end"
 require "active_support"
