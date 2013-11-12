@@ -1,3 +1,5 @@
+require "maruku"
+
 module DriveTime
 
   class ModelDefinition
