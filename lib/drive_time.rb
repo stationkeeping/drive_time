@@ -65,12 +65,14 @@ module DriveTime
 
   def self.is_affirmative?(value)
     return false if !value
-    %w[y yes true].include? value.strip.downcase
+    return true if value == true
+    %w[y yes true].include? value.to_s.strip.downcase
   end
 
   def self.is_negative?(value)
     return false if !value
-    %w[n no false].include? value.strip.downcase
+    return true if value == false
+    %w[n no false].include? value.to_s.strip.downcase
   end
 
   def self.check_string_for_boolean(value)
