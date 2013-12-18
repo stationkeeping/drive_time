@@ -50,7 +50,7 @@ module DriveTime
     end
 
     def through_attributes
-      @mapping[:through][:attributes] if through?
+      @mapping[:through][:attributes] || {}
     end
 
     def through_is_polymorphic?
@@ -87,6 +87,10 @@ module DriveTime
 
     def attribute_names
       @mapping[:attribute_names]
+    end
+
+    def through
+      @mapping[:through]
     end
 
     protected
