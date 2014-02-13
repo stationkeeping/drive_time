@@ -20,6 +20,9 @@ module DriveTime
       key = token.split("[").first
       key.slice!("expand_")
 
+      puts "KEY #{key}"
+      puts @providers.inspect
+
       if @providers[key].present?
         @providers[key].expand(filename)
       else

@@ -2,15 +2,16 @@ module DriveTime
 
   class WorksheetSource
 
-    def initialize(worksheet)
+    def initialize(worksheet, expander)
       @worksheet = worksheet
+      @expander = expander
     end
 
     def mapping
       @worksheet.mapping
     end
 
-    def model_definitions
+    def model_definitions()
       rows = @worksheet.rows.dup
       # Remove the first row and use it for field-names
       field_names = rows.shift.map{ |row| row }
@@ -35,7 +36,7 @@ module DriveTime
         field_value.strip! if field_value.present?
         model_definition[field_name] = field_value
       end
-      return ModelDefinition.new(model_definition, mapping)
+      return ModelDefinition.new(model_definition, mapping, @expander)
     end
 
   end

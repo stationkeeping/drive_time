@@ -3,11 +3,11 @@ module DriveTime
   class ModelDefinition
 
     attr_accessor :mapping
-    attr_accessor :expander
 
-    def initialize(definition, mapping)
+    def initialize(definition, mapping, expander)
       @definition = definition
       @mapping = mapping
+      @expander = expander
       @key = build_key
       # Set the model key as an attribute on the model
       attributes[mapping.key_to] = @key if mapping.key_to
@@ -18,7 +18,8 @@ module DriveTime
     end
 
     def type
-      @definition[:type].constantise
+      puts "DEF TYPE #{@definition[:type]}"
+      @definition[:type].gsub(" ", "")
     end
 
     def has_value_for?(key)
@@ -106,7 +107,7 @@ module DriveTime
       # Check for token pattern: {{some_value}}
       token = /\{\{(.*?)\}\}/.match(value)
       if token
-        expander.expand(token[1], key)
+        @expander.expand(token[1], key)
       else
         value
       end

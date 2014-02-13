@@ -1,10 +1,14 @@
 module DriveTime
 
+  class NoFieldsError < StandardError; end
+
   # Take a series of name fields. Look up their values and assemble them into a single id
   # For example it might build a name from a model's title and its amount
   class JoinBuilder
 
     def build(field_keys, model_definition)
+      puts "FIELD KEYS:: #{field_keys.inspect}"
+
       values = []
 
       field_keys.each do |field_key|

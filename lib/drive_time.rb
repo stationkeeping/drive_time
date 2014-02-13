@@ -33,6 +33,7 @@ module DriveTime
   class MissingFieldError < StandardError; end
   class ValidationError < StandardError; end
 
+
   include ActiveSupport::Inflector
   include Log4r
 

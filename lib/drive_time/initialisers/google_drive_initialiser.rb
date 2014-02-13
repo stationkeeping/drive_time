@@ -35,8 +35,7 @@ module DriveTime
       worksheets = order_worksheets_by_dependencies(worksheets)
       # Convert the worksheets to source
       worksheets.each do |worksheet|
-        WorksheetSource.new(worksheet).model_definitions.each do |model_definition|
-          model_definition.expander = @expander
+        WorksheetSource.new(worksheet, @expander).model_definitions.each do |model_definition|
           Mapper.new(@model_store).convert(model_definition)
         end
       end
@@ -85,7 +84,7 @@ module DriveTime
 
     def worksheet_for_association(name, worksheets)
       # And find the worksheet that satisfies it
-      worksheets.each { |worksheet| return worksheet if name == worksheet.title }
+      worksheets.each { |worksheet| puts "#{name} vs #{worksheet.title}"; return worksheet if name == worksheet.title }
       raise MissingAssociationError, "No worksheet #{name} to satisfy multi association"
     end
 

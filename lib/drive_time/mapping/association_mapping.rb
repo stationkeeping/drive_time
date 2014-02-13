@@ -23,7 +23,7 @@ module DriveTime
     # If name is an array, we need to add each possibility as a dependency
     def names
       if is_polymorphic?
-        @mapping[:names]
+        @mapping[:name]
       else
         [name]
       end
@@ -96,7 +96,7 @@ module DriveTime
     protected
 
     def build_class
-      class_name = @class_map.mapping_for_class(class_name) || DriveTime.class_name_from_title(name)
+      class_name = @class_map.mapping_for_class(name) || DriveTime.class_name_from_title(name)
       @clazz = class_name.constantize
     end
 
