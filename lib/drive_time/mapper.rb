@@ -116,7 +116,7 @@ module DriveTime
       associated_models.each do |associated_model|
         Logger.debug(" - Associated Model: '#{associated_model}'")
         unless association_mapping.is_inverse?
-          association_name = association_class.to_s.demodulize.underscore
+          association_name = association_mapping.as || association_class.to_s.demodulize.underscore
           if association_mapping.is_singular?
             Logger.debug("   - Adding association '#{associated_model}' to '#{@model}', '#{association_name}'")
             # This a temporary fix for theme_id being set to nil on assignment and save.
@@ -136,7 +136,7 @@ module DriveTime
               # Add the model to the store so it is saved
               @model_store.add_model(through_model, SecureRandom.uuid, through_model.class);
             else
-              association_name = association_name.pluralize
+              association_name = association_mapping.as || association_name.pluralize
               model_associations = @model.send(association_name)
               Logger.debug("   - Adding association '#{associated_model}' to '#{@model}', '#{association_name}'")
               # Push the association
